@@ -36,13 +36,17 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
         Bougan
       </text>
 
-      {/* ── Magenta teardrop accent ───────────────────────
-          Elongated droplet: rounded top, tapered bottom tip.
-          Sits at cap-height between the two words.
-          Path: centre ~x=164, spans y=8 to y=26
+      {/* ── Magenta teardrop accent ────────────────────────
+          Small compact droplet: rounded top, sharp point at bottom.
+          Matches reference proportions: ~5px wide × ~11px tall.
+          Centre x≈164.5, top y≈11, bottom point y≈22.
       ─────────────────────────────────────────────────── */}
       <path
-        d="M 164 26 C 161 22 160.5 15 163 10 C 163.8 8.2 165.8 8.2 166.5 10 C 169 15 168.5 22 165.5 26 C 165 26.6 164.5 26.6 164 26 Z"
+        d="M 164.5 22
+           C 162 20.5 161.2 16 162 12.5
+           C 162.5 10.5 163.5 9.8 164.5 9.8
+           C 165.5 9.8 166.5 10.5 167 12.5
+           C 167.8 16 167 20.5 164.5 22 Z"
         fill="#C0306A"
       />
 
