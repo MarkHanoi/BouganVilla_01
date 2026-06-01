@@ -104,6 +104,30 @@ body {
     page-b2 55s ease-in-out infinite;
 }
 
+/* ── Shore: sea-to-sand wave animations ──────────────────────
+   Four layers roll at different speeds + phases.
+   Layer order: back (slow, dark) → front (fast, foam).
+   Each keyframe starts at a different phase offset so the
+   waves never align — giving a natural, irregular rhythm.
+   ─────────────────────────────────────────────────────────── */
+
+@keyframes wave-roll-a {
+  0%   { transform: translateX(0);     }
+  100% { transform: translateX(-50%);  }
+}
+@keyframes wave-roll-b {
+  0%   { transform: translateX(-14%);  }
+  100% { transform: translateX(-64%);  }
+}
+@keyframes wave-roll-c {
+  0%   { transform: translateX(-28%);  }
+  100% { transform: translateX(-78%);  }
+}
+@keyframes wave-roll-d {
+  0%   { transform: translateX(-42%);  }
+  100% { transform: translateX(-92%);  }
+}
+
 /* Hero grain overlay */
 .grain-overlay {
   position: relative;
