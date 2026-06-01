@@ -1,7 +1,6 @@
 /**
- * Bougan Villa wordmark — inline SVG, transparent background.
- * Design: ultra-thin all-caps geometric sans (Jost 100) with wide tracking.
- * Mediterranean minimalist luxury — Comporta / boutique coastal aesthetic.
+ * Bougan'villa wordmark — inline SVG, transparent background.
+ * Bold Cormorant Garamond serif, magenta teardrop accent, tracked subtitle.
  *
  * Props:
  *   inverted — white text (for dark / hero backgrounds)
@@ -14,72 +13,61 @@ interface LogoProps {
 
 export default function Logo({ inverted = false, className = "" }: LogoProps) {
   const ink = inverted ? "#ffffff" : "#2B2B2B";
-  const sub = inverted ? "rgba(255,255,255,0.45)" : "#9A9690";
-  const accent = inverted ? "rgba(255,255,255,0.55)" : "#C96A3A";
+  const sub = inverted ? "rgba(255,255,255,0.50)" : "rgba(43,43,43,0.45)";
 
   return (
     <svg
-      viewBox="0 0 196 44"
+      viewBox="0 0 278 66"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      aria-label="Bougan Villa — Property Management"
-      style={{ display: "block" }}
+      aria-label="Bougan'villa — Property Management"
+      style={{ display: "block", overflow: "visible" }}
     >
-      {/* ── Wordmark: BOUGAN · VILLA ───────────────────────── */}
-
-      {/* BOUGAN */}
+      {/* ── Bougan — bold serif ──────────────────────────── */}
       <text
         x="0"
-        y="22"
-        fontFamily="'Jost', system-ui, sans-serif"
-        fontSize="15"
-        fontWeight="200"
+        y="47"
+        fontFamily="'Cormorant Garamond', Georgia, 'Times New Roman', serif"
+        fontSize="50"
+        fontWeight="700"
         fill={ink}
-        letterSpacing="4"
-        dominantBaseline="middle"
       >
-        BOUGAN
+        Bougan
       </text>
 
-      {/* Separator dot — terracotta / muted white */}
-      <text
-        x="97"
-        y="22"
-        fontFamily="'Jost', system-ui, sans-serif"
-        fontSize="11"
-        fontWeight="300"
-        fill={accent}
-        dominantBaseline="middle"
-        textAnchor="middle"
-      >
-        ·
-      </text>
+      {/* ── Magenta teardrop accent ───────────────────────
+          Elongated droplet: rounded top, tapered bottom tip.
+          Sits at cap-height between the two words.
+          Path: centre ~x=164, spans y=8 to y=26
+      ─────────────────────────────────────────────────── */}
+      <path
+        d="M 164 26 C 161 22 160.5 15 163 10 C 163.8 8.2 165.8 8.2 166.5 10 C 169 15 168.5 22 165.5 26 C 165 26.6 164.5 26.6 164 26 Z"
+        fill="#C0306A"
+      />
 
-      {/* VILLA */}
+      {/* ── villa — bold serif ───────────────────────────── */}
       <text
-        x="107"
-        y="22"
-        fontFamily="'Jost', system-ui, sans-serif"
-        fontSize="15"
-        fontWeight="200"
+        x="173"
+        y="47"
+        fontFamily="'Cormorant Garamond', Georgia, 'Times New Roman', serif"
+        fontSize="50"
+        fontWeight="700"
         fill={ink}
-        letterSpacing="4"
-        dominantBaseline="middle"
       >
-        VILLA
+        villa
       </text>
 
-      {/* ── Subtitle: PROPERTY MANAGEMENT ─────────────────── */}
+      {/* ── PROPERTY MANAGEMENT — light tracked sans ─────── */}
       <text
-        x="1"
-        y="36"
+        x="139"
+        y="62"
         fontFamily="'Jost', system-ui, sans-serif"
-        fontSize="6.5"
+        fontSize="9.5"
         fontWeight="300"
         fill={sub}
-        letterSpacing="2.6"
-        dominantBaseline="middle"
+        letterSpacing="3.8"
+        textAnchor="middle"
       >
         PROPERTY MANAGEMENT
       </text>
