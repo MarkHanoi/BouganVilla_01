@@ -25,8 +25,46 @@ export default function Home() {
     <>
       {/* ── Hero ───────────────────────────────────────── */}
       <section
-        className="grain-overlay hero-gradient relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden"
+        className="grain-overlay relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden"
       >
+        {/* Beach image — rotated 180° so ocean is top, sand is bottom */}
+        <img
+          src="/photos/hero-beach.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+          style={{ transform: "rotate(180deg)" }}
+        />
+
+        {/* Top extension — bleed ocean turquoise upward from image edge */}
+        <div
+          className="absolute top-0 left-0 right-0 pointer-events-none"
+          style={{
+            height: "38%",
+            background: "linear-gradient(to bottom, #1b9070 0%, rgba(27,144,112,0) 100%)",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Bottom extension — bleed warm sand downward from image edge */}
+        <div
+          className="absolute bottom-0 left-0 right-0 pointer-events-none"
+          style={{
+            height: "38%",
+            background: "linear-gradient(to top, #c4925a 0%, rgba(196,146,90,0) 100%)",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Text-readability overlay — darkens the mid-zone where copy sits */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.52) 38%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.18) 100%)",
+            zIndex: 2,
+          }}
+        />
+
         <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-8">
             <div className="h-px w-12 bg-white/30" />
@@ -66,53 +104,39 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Decorative bougainvillea pink orb */}
-        <div
-          className="absolute bottom-0 right-0 w-96 h-96 rounded-full opacity-[0.07] blur-3xl pointer-events-none"
-          style={{ backgroundColor: "var(--color-magenta)" }}
-        />
-        <div
-          className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-[0.06] blur-3xl pointer-events-none"
-          style={{ backgroundColor: "var(--color-sand)" }}
-        />
-
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 z-10">
           <div className="w-px h-10 bg-white/20" />
         </div>
       </section>
 
-      {/* ── Shore: sea meets sand ────────────────────────
-           5 SVG wave layers at staggered speeds & phases.
-           Background depth gradient: dark hero → medium sea
-           → bright Mediterranean teal → transparent sand.
-           Front waves are the BRIGHTEST (shallow turquoise),
-           back waves the darkest (deep water). Foam strip last.
+      {/* ── Shore: sand-to-cream transition ─────────────────
+           5 SVG wave layers continuing the warm sand palette
+           from the hero bottom into the cream page background.
+           Colors: warm sandy gold → light sand → cream foam.
       ──────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden"
         style={{ height: "240px", marginTop: "-1px" }}
         aria-hidden="true"
       >
-        {/* Depth gradient — deep sea at top, bright teal midway, transparent at sand */}
+        {/* Depth gradient — warm sand at top, fades to cream */}
         <div
           className="absolute inset-0"
           style={{
             background: [
               "linear-gradient(to bottom,",
-              "  #183448 0%,",
-              "  #1a5070 18%,",
-              "  #1c7090 36%,",
-              "  #2892b0 55%,",
-              "  rgba(40,146,176,0.45) 70%,",
-              "  rgba(40,146,176,0.10) 85%,",
+              "  #c4925a 0%,",
+              "  #cc9e68 18%,",
+              "  #d4aa78 36%,",
+              "  rgba(220,178,130,0.55) 65%,",
+              "  rgba(220,178,130,0.10) 85%,",
               "  transparent 100%",
               ")",
             ].join(""),
           }}
         />
 
-        {/* Wave 1 — back, deep navy, slowest (26s)
-            Tall organic shape, 4 irregular periods across 1440px  */}
+        {/* Wave 1 — back, deep warm sand, slowest (26s) */}
         <svg
           className="absolute"
           style={{ bottom: 0, width: "200%", height: "240px", animation: "wave-roll-a 26s linear infinite" }}
@@ -130,11 +154,11 @@ export default function Home() {
                C 2200,120 2380,176 2470,148
                C 2573,120 2778,176 2880,148
                L2880,240 L0,240 Z"
-            fill="#183448"
+            fill="#b07840"
           />
         </svg>
 
-        {/* Wave 2 — sea blue, medium-slow (18s) */}
+        {/* Wave 2 — medium sand, medium-slow (18s) */}
         <svg
           className="absolute"
           style={{ bottom: 0, width: "200%", height: "190px", animation: "wave-roll-b 18s linear infinite" }}
@@ -152,11 +176,11 @@ export default function Home() {
                C 2210,94 2410,142 2510,118
                C 2603,94 2788,142 2880,118
                L2880,190 L0,190 Z"
-            fill="rgba(26,80,110,0.90)"
+            fill="rgba(192,140,80,0.88)"
           />
         </svg>
 
-        {/* Wave 3 — medium teal, medium (12s) */}
+        {/* Wave 3 — lighter sand, medium (12s) */}
         <svg
           className="absolute"
           style={{ bottom: 0, width: "200%", height: "145px", animation: "wave-roll-c 12s linear infinite" }}
@@ -174,12 +198,11 @@ export default function Home() {
                C 2200,68 2400,112 2500,90
                C 2595,68 2785,112 2880,90
                L2880,145 L0,145 Z"
-            fill="rgba(28,102,138,0.88)"
+            fill="rgba(208,162,100,0.82)"
           />
         </svg>
 
-        {/* Wave 4 — bright Mediterranean teal, faster (8s)
-            This is the "shallow water" layer — the most vivid colour */}
+        {/* Wave 4 — pale sand, faster (8s) */}
         <svg
           className="absolute"
           style={{ bottom: 0, width: "200%", height: "94px", animation: "wave-roll-d 8s linear infinite" }}
@@ -197,12 +220,11 @@ export default function Home() {
                C 2198,38 2373,78 2460,58
                C 2565,38 2775,78 2880,58
                L2880,94 L0,94 Z"
-            fill="rgba(48,152,185,0.82)"
+            fill="rgba(224,184,130,0.75)"
           />
         </svg>
 
-        {/* Wave 5 — seafoam / surf edge, fastest (5s)
-            Near-white, low amplitude — simulates the foam line */}
+        {/* Wave 5 — cream foam edge, fastest (5s) */}
         <svg
           className="absolute"
           style={{ bottom: 0, width: "200%", height: "42px", animation: "wave-roll-e 5s linear infinite" }}
@@ -220,7 +242,7 @@ export default function Home() {
                C 2165,12 2375,40 2480,26
                C 2580,12 2780,40 2880,26
                L2880,42 L0,42 Z"
-            fill="rgba(210,245,252,0.58)"
+            fill="rgba(245,232,210,0.65)"
           />
         </svg>
       </div>
