@@ -82,10 +82,7 @@ export default function Home() {
       </section>
 
       {/* ── Manifesto strip ────────────────────────────── */}
-      <section
-        className="py-10 border-b border-[var(--color-sand-border)]"
-        style={{ backgroundColor: "var(--color-sand)" }}
-      >
+      <section className="py-10 border-b border-[var(--color-sand-border)]">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <p className="font-serif text-lg lg:text-xl text-[var(--color-charcoal)] leading-relaxed italic">
             "We only list homes we believe in — places where the light, the air, and the detail make a real difference to your stay."
@@ -112,6 +109,7 @@ export default function Home() {
             <div
               key={property.id}
               className={`grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-[var(--color-sand-border)] ${i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""}`}
+              style={{ backdropFilter: "blur(2px)" }}
             >
               {/* Image — clickable to detail page */}
               <Link
@@ -140,10 +138,10 @@ export default function Home() {
                 </div>
               </Link>
 
-              {/* Content */}
+              {/* Content — semi-transparent glass card */}
               <div
                 className="flex flex-col justify-center px-8 lg:px-14 py-12 lg:py-16"
-                style={{ backgroundColor: "var(--color-cream)" }}
+                style={{ backgroundColor: "rgba(253, 249, 244, 0.72)", backdropFilter: "blur(8px)" }}
               >
                 <p
                   className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3"
@@ -200,10 +198,7 @@ export default function Home() {
       </section>
 
       {/* ── Why Bougan Villa ────────────────────────────── */}
-      <section
-        className="py-16 lg:py-24"
-        style={{ backgroundColor: "var(--color-sand)" }}
-      >
+      <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-14">
             <p
@@ -218,7 +213,11 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             {usps.map((usp) => (
-              <div key={usp.title} className="text-center">
+              <div
+                key={usp.title}
+                className="text-center px-8 py-10 border border-[var(--color-sand-border)]"
+                style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}
+              >
                 <div
                   className="text-2xl mb-5 block"
                   style={{ color: "var(--color-magenta)" }}
@@ -240,7 +239,10 @@ export default function Home() {
       {/* ── About ────────────────────────────────────────── */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div>
+          <div
+            className="px-10 py-12 border border-[var(--color-sand-border)]"
+            style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}
+          >
             <p
               className="text-[10px] tracking-[0.3em] uppercase font-medium mb-4"
               style={{ color: "var(--color-terracotta)" }}
@@ -273,18 +275,13 @@ export default function Home() {
           </div>
 
           <div className="relative">
-            <div
-              className="aspect-[4/3] overflow-hidden"
-              style={{ backgroundColor: "var(--color-sand)" }}
-            >
-              {/* REPLACE: upload a brand/lifestyle photo here */}
+            <div className="aspect-[4/3] overflow-hidden">
               <img
                 src="/photos/villa-bougainvillea/02_LivingRoom_CafeTable.avif"
                 alt="Portuguese coast"
                 className="w-full h-full object-cover"
               />
             </div>
-            {/* Decorative bougainvillea accent */}
             <div
               className="absolute -bottom-4 -left-4 w-24 h-24 -z-10"
               style={{ backgroundColor: "var(--color-terracotta-light)" }}
@@ -294,25 +291,26 @@ export default function Home() {
       </section>
 
       {/* ── Testimonials ─────────────────────────────────── */}
-      <section
-        className="py-16 lg:py-24"
-        style={{ backgroundColor: "var(--color-deep-green)" }}
-      >
+      <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-14">
             <p
               className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3"
-              style={{ color: "var(--color-sand)" }}
+              style={{ color: "var(--color-terracotta)" }}
             >
               Guest Stories
             </p>
-            <h2 className="font-serif text-4xl lg:text-5xl text-white">
+            <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">
               What our guests say
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             {testimonials.map((t) => (
-              <div key={t.id} className="p-8 lg:p-10" style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <div
+                key={t.id}
+                className="p-8 lg:p-10 border border-[var(--color-sand-border)]"
+                style={{ backgroundColor: "rgba(45, 74, 62, 0.88)", backdropFilter: "blur(8px)" }}
+              >
                 <div className="flex gap-0.5 mb-5">
                   {Array.from({ length: t.rating }).map((_, i) => (
                     <Star key={i} size={12} className="fill-[var(--color-sand)] text-[var(--color-sand)]" />
@@ -334,11 +332,11 @@ export default function Home() {
       </section>
 
       {/* ── Contact CTA ──────────────────────────────────── */}
-      <section
-        className="py-16 lg:py-24 px-6 text-center"
-        style={{ backgroundColor: "var(--color-cream)" }}
-      >
-        <div className="max-w-xl mx-auto">
+      <section className="py-16 lg:py-24 px-6 text-center">
+        <div
+          className="max-w-xl mx-auto px-10 py-14 border border-[var(--color-sand-border)]"
+          style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}
+        >
           {/* Bougainvillea divider */}
           <div className="bv-divider mb-8 max-w-xs mx-auto">
             <div className="bv-divider-dot" />
