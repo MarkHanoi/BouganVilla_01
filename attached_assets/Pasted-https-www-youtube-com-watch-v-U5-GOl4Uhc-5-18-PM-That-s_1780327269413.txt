@@ -1,0 +1,55 @@
+https://www.youtube.com/watch?v=-U5_GOl4Uhc
+
+5:18 PM
+That's a beautiful aerial shot — the classic Andalusian beach from above, with that perfect turquoise-to-sand transition. Here's what your options are for achieving this on a website:
+
+Option 1: CSS + Canvas animation (what we've been building) — works for a background, but hard to make look truly photorealistic like that video.
+
+Option 2: Video background — the most realistic result, by far. You use an actual drone video (like that YouTube clip) as a <video> element behind your content. This is what luxury property and hotel sites typically do.
+
+Option 3: WebGL shader (Three.js / GLSL) — procedural waves, very impressive but complex to build.
+
+Let me show you all three approaches visually, and give you the actual code for option 2 (video background) since that's the closest to what you're after:
+
+
+
+The video background approach is what you want. Here's the exact code to drop into your site:
+
+html
+<!-- In your hero/section -->
+<section style="position: relative; height: 100vh; overflow: hidden;">
+  
+  <!-- The video sits behind everything -->
+  <video 
+    autoplay muted loop playsinline
+    style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;"
+  >
+    <source src="/videos/beach-aerial.webm" type="video/webm">
+    <source src="/videos/beach-aerial.mp4" type="video/mp4">
+  </video>
+
+  <!-- Optional dark overlay so text is readable -->
+  <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.25); z-index: 1;"></div>
+
+  <!-- Your content goes here -->
+  <div style="position: relative; z-index: 2;">
+    <h1>Bouganvilla</h1>
+  </div>
+
+</section>
+To get the actual footage, here are your realistic options:
+
+Pexels Videos — free, commercial use, search "aerial beach waves" or "drone beach"
+Mixkit — also free, good quality aerial clips
+Envato Elements / Pond5 — paid but premium quality, similar to what you linked
+License the actual clip — that YouTube video is from a creator; you could contact them
+Once you have the clip, use HandBrake (free) to export both .webm and .mp4 versions at ~720p — this keeps the file under 8MB so it loads fast.
+
+Want me to update your Bouganvilla site's hero section to use a video background, ready to just swap in the file path?
+
+
+
+
+
+
+Claud

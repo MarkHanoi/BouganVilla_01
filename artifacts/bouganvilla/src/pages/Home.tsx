@@ -82,102 +82,145 @@ export default function Home() {
       </section>
 
       {/* ── Shore: sea meets sand ────────────────────────
-           Four SVG wave layers animate at staggered speeds
-           and phase offsets — back waves slow & dark,
-           front waves fast & foamy — over a gradient that
-           fades from the hero's deep ocean floor to transparent,
-           letting the warm sand page-flow-bg show through below.
+           5 SVG wave layers at staggered speeds & phases.
+           Background depth gradient: dark hero → medium sea
+           → bright Mediterranean teal → transparent sand.
+           Front waves are the BRIGHTEST (shallow turquoise),
+           back waves the darkest (deep water). Foam strip last.
       ──────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden"
-        style={{ height: "118px", marginTop: "-2px" }}
+        style={{ height: "240px", marginTop: "-1px" }}
         aria-hidden="true"
       >
-        {/* Sea depth gradient — fades hero dark → transparent */}
+        {/* Depth gradient — deep sea at top, bright teal midway, transparent at sand */}
         <div
           className="absolute inset-0"
           style={{
-            background:
-              "linear-gradient(to bottom, #183448 0%, rgba(22,58,82,0.55) 55%, transparent 100%)",
+            background: [
+              "linear-gradient(to bottom,",
+              "  #183448 0%,",
+              "  #1a5070 18%,",
+              "  #1c7090 36%,",
+              "  #2892b0 55%,",
+              "  rgba(40,146,176,0.45) 70%,",
+              "  rgba(40,146,176,0.10) 85%,",
+              "  transparent 100%",
+              ")",
+            ].join(""),
           }}
         />
 
-        {/* Wave 1 — back, deep, slowest (24s) */}
+        {/* Wave 1 — back, deep navy, slowest (26s)
+            Tall organic shape, 4 irregular periods across 1440px  */}
         <svg
           className="absolute"
-          style={{
-            bottom: 0, width: "200%", height: "108px",
-            animation: "wave-roll-a 24s linear infinite",
-          }}
-          viewBox="0 0 2880 108"
+          style={{ bottom: 0, width: "200%", height: "240px", animation: "wave-roll-a 26s linear infinite" }}
+          viewBox="0 0 2880 240"
           preserveAspectRatio="none"
         >
           <path
-            d="M0,64 C90,42 200,80 300,62 C400,42 520,82 630,62
-               C740,42 840,80 960,62 C1060,42 1160,82 1280,60
-               C1390,40 1500,80 1620,62 C1720,42 1840,80 1940,60
-               C2060,40 2160,82 2280,62 C2380,42 2500,80 2600,60
-               C2720,40 2800,80 2880,62 L2880,108 L0,108 Z"
+            d="M0,148
+               C 73,120 145,175 290,148
+               C 385,120 575,176 670,148
+               C 760,120 940,176 1030,148
+               C 1133,120 1338,176 1440,148
+               C 1513,120 1585,175 1730,148
+               C 1825,120 2015,176 2110,148
+               C 2200,120 2380,176 2470,148
+               C 2573,120 2778,176 2880,148
+               L2880,240 L0,240 Z"
             fill="#183448"
           />
         </svg>
 
-        {/* Wave 2 — mid-deep, slightly lighter (17s) */}
+        {/* Wave 2 — sea blue, medium-slow (18s) */}
         <svg
           className="absolute"
-          style={{
-            bottom: 0, width: "200%", height: "86px",
-            animation: "wave-roll-b 17s linear infinite",
-          }}
-          viewBox="0 0 2880 86"
+          style={{ bottom: 0, width: "200%", height: "190px", animation: "wave-roll-b 18s linear infinite" }}
+          viewBox="0 0 2880 190"
           preserveAspectRatio="none"
         >
           <path
-            d="M0,52 C110,28 220,66 340,50 C450,28 560,68 680,48
-               C800,26 900,68 1020,50 C1130,28 1250,68 1360,48
-               C1480,26 1580,68 1700,50 C1810,28 1920,66 2040,48
-               C2160,26 2260,68 2380,50 C2490,28 2600,66 2720,48
-               C2800,28 2880,66 2880,50 L2880,86 L0,86 Z"
-            fill="rgba(20,62,90,0.92)"
+            d="M0,118
+               C 80,94 160,142 320,118
+               C 408,94 583,142 670,118
+               C 770,94 970,142 1070,118
+               C 1163,94 1348,142 1440,118
+               C 1520,94 1600,142 1760,118
+               C 1848,94 2023,142 2110,118
+               C 2210,94 2410,142 2510,118
+               C 2603,94 2788,142 2880,118
+               L2880,190 L0,190 Z"
+            fill="rgba(26,80,110,0.90)"
           />
         </svg>
 
-        {/* Wave 3 — mid, teal, medium (11s) */}
+        {/* Wave 3 — medium teal, medium (12s) */}
         <svg
           className="absolute"
-          style={{
-            bottom: 0, width: "200%", height: "64px",
-            animation: "wave-roll-c 11s linear infinite",
-          }}
-          viewBox="0 0 2880 64"
+          style={{ bottom: 0, width: "200%", height: "145px", animation: "wave-roll-c 12s linear infinite" }}
+          viewBox="0 0 2880 145"
           preserveAspectRatio="none"
         >
           <path
-            d="M0,40 C130,16 260,56 390,38 C520,16 640,58 780,36
-               C900,14 1020,58 1150,38 C1270,16 1400,56 1530,36
-               C1660,14 1780,58 1900,38 C2030,16 2150,56 2280,36
-               C2420,14 2560,56 2690,36 C2800,16 2880,52 2880,36
-               L2880,64 L0,64 Z"
-            fill="rgba(32,88,115,0.78)"
+            d="M0,90
+               C 88,68 175,112 350,90
+               C 428,68 583,112 660,90
+               C 760,68 960,112 1060,90
+               C 1155,68 1345,112 1440,90
+               C 1528,68 1615,112 1790,90
+               C 1868,68 2023,112 2100,90
+               C 2200,68 2400,112 2500,90
+               C 2595,68 2785,112 2880,90
+               L2880,145 L0,145 Z"
+            fill="rgba(28,102,138,0.88)"
           />
         </svg>
 
-        {/* Wave 4 — surf/foam edge, lightest, fastest (7s) */}
+        {/* Wave 4 — bright Mediterranean teal, faster (8s)
+            This is the "shallow water" layer — the most vivid colour */}
         <svg
           className="absolute"
-          style={{
-            bottom: 0, width: "200%", height: "38px",
-            animation: "wave-roll-d 7s linear infinite",
-          }}
-          viewBox="0 0 2880 38"
+          style={{ bottom: 0, width: "200%", height: "94px", animation: "wave-roll-d 8s linear infinite" }}
+          viewBox="0 0 2880 94"
           preserveAspectRatio="none"
         >
           <path
-            d="M0,24 C160,6 320,36 480,22 C640,6 800,34 960,20
-               C1120,4 1280,34 1440,20 C1600,4 1760,34 1920,20
-               C2080,4 2240,34 2400,20 C2560,4 2720,32 2880,20
-               L2880,38 L0,38 Z"
-            fill="rgba(195,228,235,0.32)"
+            d="M0,58
+               C 70,38 140,78 280,58
+               C 378,38 573,78 670,58
+               C 758,38 933,78 1020,58
+               C 1125,38 1335,78 1440,58
+               C 1510,38 1580,78 1720,58
+               C 1818,38 2013,78 2110,58
+               C 2198,38 2373,78 2460,58
+               C 2565,38 2775,78 2880,58
+               L2880,94 L0,94 Z"
+            fill="rgba(48,152,185,0.82)"
+          />
+        </svg>
+
+        {/* Wave 5 — seafoam / surf edge, fastest (5s)
+            Near-white, low amplitude — simulates the foam line */}
+        <svg
+          className="absolute"
+          style={{ bottom: 0, width: "200%", height: "42px", animation: "wave-roll-e 5s linear infinite" }}
+          viewBox="0 0 2880 42"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,26
+               C 83,12 165,40 330,26
+               C 403,12 548,40 620,26
+               C 725,12 935,40 1040,26
+               C 1140,12 1340,40 1440,26
+               C 1523,12 1605,40 1770,26
+               C 1843,12 1988,40 2060,26
+               C 2165,12 2375,40 2480,26
+               C 2580,12 2780,40 2880,26
+               L2880,42 L0,42 Z"
+            fill="rgba(210,245,252,0.58)"
           />
         </svg>
       </div>
