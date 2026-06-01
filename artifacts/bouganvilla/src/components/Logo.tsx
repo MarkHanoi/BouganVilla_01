@@ -41,13 +41,13 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
           Centre x≈158, sits in the ascender zone.
       ─────────────────────────────────────────────────── */}
       <path
-        d="M 153 9 L 163 9 L 158 17 Z"
+        d="M 149 9 L 159 9 L 154 17 Z"
         fill="#C0306A"
       />
 
       {/* ── villa — bold serif ───────────────────────────── */}
       <text
-        x="165"
+        x="161"
         y="47"
         fontFamily="'Cormorant Garamond', Georgia, 'Times New Roman', serif"
         fontSize="50"
@@ -62,7 +62,7 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
         x="139"
         y="76"
         fontFamily="'Jost', system-ui, sans-serif"
-        fontSize="9.5"
+        fontSize="11"
         fontWeight="300"
         fill={sub}
         letterSpacing="3.8"
