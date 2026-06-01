@@ -17,7 +17,7 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
 
   return (
     <svg
-      viewBox="0 0 278 66"
+      viewBox="0 0 278 74"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -37,18 +37,17 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
       </text>
 
       {/* ── Magenta downward chevron accent ────────────────
-          A compact downward-pointing solid chevron/triangle
-          sitting at the top between "Bougan" and "villa".
-          Centre x≈166, sits in the ascender zone.
+          Shifted left to close the gap between words.
+          Centre x≈158, sits in the ascender zone.
       ─────────────────────────────────────────────────── */}
       <path
-        d="M 161 9 L 171 9 L 166 17 Z"
+        d="M 153 9 L 163 9 L 158 17 Z"
         fill="#C0306A"
       />
 
       {/* ── villa — bold serif ───────────────────────────── */}
       <text
-        x="173"
+        x="165"
         y="47"
         fontFamily="'Cormorant Garamond', Georgia, 'Times New Roman', serif"
         fontSize="50"
@@ -61,7 +60,7 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
       {/* ── PROPERTY MANAGEMENT — light tracked sans ─────── */}
       <text
         x="139"
-        y="62"
+        y="70"
         fontFamily="'Jost', system-ui, sans-serif"
         fontSize="9.5"
         fontWeight="300"
