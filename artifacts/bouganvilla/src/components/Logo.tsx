@@ -37,16 +37,18 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
       </text>
 
       {/* ── Magenta teardrop accent ────────────────────────
-          Small compact droplet: rounded top, sharp point at bottom.
-          Matches reference proportions: ~5px wide × ~11px tall.
-          Centre x≈164.5, top y≈11, bottom point y≈22.
+          Downward water-drop: rounded circular top arc,
+          tapered point at bottom. Four bezier segments:
+          bottom-point → left-taper → top-left-arc →
+          top-right-arc → right-taper → bottom-point.
+          Centre x=164.5, width 7px, height ~13px.
       ─────────────────────────────────────────────────── */}
       <path
         d="M 164.5 22
-           C 162 20.5 161.2 16 162 12.5
-           C 162.5 10.5 163.5 9.8 164.5 9.8
-           C 165.5 9.8 166.5 10.5 167 12.5
-           C 167.8 16 167 20.5 164.5 22 Z"
+           C 162 18.5 161 16   161 13.5
+           C 161 11   162.5 9.5 164.5 9.5
+           C 166.5 9.5 168 11   168 13.5
+           C 168 16   167 18.5 164.5 22 Z"
         fill="#C0306A"
       />
 
