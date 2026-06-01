@@ -31,7 +31,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd artifacts/bouganvilla && pnpm exec vite --config vite.config.ts --port 5000 --host 0.0.0.0"
+args = "pnpm --filter @workspace/bouganvilla run dev"
 waitForPort = 5000
 
 [agent]
@@ -46,10 +46,6 @@ timeoutMs = 20000
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 8080
-externalPort = 8080
 
 [[ports]]
 localPort = 8081
