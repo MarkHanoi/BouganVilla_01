@@ -17,7 +17,7 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
 
   return (
     <svg
-      viewBox="0 0 278 74"
+      viewBox="0 0 278 80"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -60,7 +60,7 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
       {/* ── PROPERTY MANAGEMENT — light tracked sans ─────── */}
       <text
         x="139"
-        y="70"
+        y="76"
         fontFamily="'Jost', system-ui, sans-serif"
         fontSize="9.5"
         fontWeight="300"
