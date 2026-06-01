@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Jost", system-ui, -apple-system, sans-serif;
+
+  /* Brand palette — section backgrounds are glass so the flow shows through */
+  --color-sand:        rgba(245, 239, 224, 0.82);
+  --color-terracotta:  #c96a3a;
+  --color-deep-green:  #2d4a3e;
+  --color-cream:       rgba(250, 247, 242, 0.80);
+  --color-charcoal:    #2b2b2b;
+  --color-ocean:       #4a7fa5;
+
+  /* Derived shades */
+  --color-terracotta-light: rgba(240, 216, 204, 0.85);
+  --color-deep-green-light: #3d6455;
+  --color-charcoal-muted:   #6b6b6b;
+  --color-charcoal-subtle:  #a8a8a8;
+  --color-sand-border:      rgba(232, 223, 208, 0.70);
+
+  /* Bougainvillea accent (the flower) */
+  --color-magenta:       #c0306a;
+  --color-magenta-light: rgba(242, 212, 224, 0.85);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ── Page transition ─────────────────────────────────────── */
+@keyframes page-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: page-fade-up 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  will-change: opacity, transform;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #fdf9f4;
+  color: var(--color-charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 300;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* ── Global flowing background ───────────────────────────────
+   Five radial blobs float slowly across the entire viewport.
+   Fixed so it stays alive as you scroll — the content flows
+   over a living, breathing Mediterranean canvas.
+   Palette: coastal sage, terracotta sun, bougainvillea pink,
+   sea blue, golden afternoon light.
+   ─────────────────────────────────────────────────────────── */
+
+@property --fx1 { syntax: '<percentage>'; initial-value: 22%; inherits: false; }
+@property --fy1 { syntax: '<percentage>'; initial-value: 18%; inherits: false; }
+@property --fx2 { syntax: '<percentage>'; initial-value: 78%; inherits: false; }
+@property --fy2 { syntax: '<percentage>'; initial-value: 42%; inherits: false; }
+@property --fx3 { syntax: '<percentage>'; initial-value: 38%; inherits: false; }
+@property --fy3 { syntax: '<percentage>'; initial-value: 72%; inherits: false; }
+@property --fx4 { syntax: '<percentage>'; initial-value: 88%; inherits: false; }
+@property --fy4 { syntax: '<percentage>'; initial-value: 22%; inherits: false; }
+@property --fx5 { syntax: '<percentage>'; initial-value: 12%; inherits: false; }
+@property --fy5 { syntax: '<percentage>'; initial-value: 82%; inherits: false; }
+
+/* Blob 1 — coastal sage — 38s */
+@keyframes page-b1 {
+  0%   { --fx1: 22%; --fy1: 18%; }
+  30%  { --fx1: 38%; --fy1: 42%; }
+  65%  { --fx1: 14%; --fy1: 58%; }
+  100% { --fx1: 22%; --fy1: 18%; }
+}
+
+/* Blob 2 — terracotta sun — 28s */
+@keyframes page-b2 {
+  0%   { --fx2: 78%; --fy2: 42%; }
+  35%  { --fx2: 62%; --fy2: 18%; }
+  70%  { --fx2: 82%; --fy2: 65%; }
+  100% { --fx2: 78%; --fy2: 42%; }
+}
+
+/* Blob 3 — bougainvillea — 45s */
+@keyframes page-b3 {
+  0%   { --fx3: 38%; --fy3: 72%; }
+  25%  { --fx3: 55%; --fy3: 48%; }
+  60%  { --fx3: 28%; --fy3: 85%; }
+  85%  { --fx3: 48%; --fy3: 60%; }
+  100% { --fx3: 38%; --fy3: 72%; }
+}
+
+/* Blob 4 — sea turquoise — 33s */
+@keyframes page-b4 {
+  0%   { --fx4: 88%; --fy4: 22%; }
+  40%  { --fx4: 72%; --fy4: 52%; }
+  78%  { --fx4: 92%; --fy4: 78%; }
+  100% { --fx4: 88%; --fy4: 22%; }
+}
+
+/* Blob 5 — golden afternoon — 51s */
+@keyframes page-b5 {
+  0%   { --fx5: 12%; --fy5: 82%; }
+  42%  { --fx5: 28%; --fy5: 52%; }
+  80%  { --fx5: 6%;  --fy5: 32%; }
+  100% { --fx5: 12%; --fy5: 82%; }
+}
+
+.page-flow-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 58% 55% at var(--fx1) var(--fy1),
+      rgba(90, 145, 115, 0.14) 0%, transparent 68%),
+    radial-gradient(ellipse 65% 50% at var(--fx2) var(--fy2),
+      rgba(201, 106, 58, 0.11) 0%, transparent 62%),
+    radial-gradient(ellipse 50% 60% at var(--fx3) var(--fy3),
+      rgba(192, 48, 106, 0.08) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 52% at var(--fx4) var(--fy4),
+      rgba(74, 127, 165, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 48% 58% at var(--fx5) var(--fy5),
+      rgba(200, 168, 88, 0.12) 0%, transparent 65%),
+    #fdf9f4;
+  animation:
+    page-b1 38s ease-in-out infinite,
+    page-b2 28s ease-in-out infinite,
+    page-b3 45s ease-in-out infinite,
+    page-b4 33s ease-in-out infinite,
+    page-b5 51s ease-in-out infinite;
+}
+
+/* Hero grain overlay */
+.grain-overlay {
+  position: relative;
+}
+.grain-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  z-index: 2;
+}
+
+/* ── Organic mesh gradient hero ─────────────────────
+   Four blobs drift over a dark Mediterranean base.
+   Richer and more saturated than the page background.
+   ───────────────────────────────────────────────────── */
+
+@property --hx1 { syntax: '<percentage>'; initial-value: 18%; inherits: false; }
+@property --hy1 { syntax: '<percentage>'; initial-value: 38%; inherits: false; }
+@property --hx2 { syntax: '<percentage>'; initial-value: 78%; inherits: false; }
+@property --hy2 { syntax: '<percentage>'; initial-value: 22%; inherits: false; }
+@property --hx3 { syntax: '<percentage>'; initial-value: 52%; inherits: false; }
+@property --hy3 { syntax: '<percentage>'; initial-value: 72%; inherits: false; }
+@property --hx4 { syntax: '<percentage>'; initial-value: 85%; inherits: false; }
+@property --hy4 { syntax: '<percentage>'; initial-value: 78%; inherits: false; }
+
+/* Blob 1 — coastal sage — 24s */
+@keyframes hero-b1 {
+  0%   { --hx1: 18%; --hy1: 38%; }
+  20%  { --hx1: 28%; --hy1: 20%; }
+  45%  { --hx1: 10%; --hy1: 55%; }
+  70%  { --hx1: 32%; --hy1: 28%; }
+  100% { --hx1: 18%; --hy1: 38%; }
+}
+
+/* Blob 2 — Mediterranean azure — 19s */
+@keyframes hero-b2 {
+  0%   { --hx2: 78%; --hy2: 22%; }
+  25%  { --hx2: 60%; --hy2: 40%; }
+  55%  { --hx2: 80%; --hy2: 55%; }
+  80%  { --hx2: 55%; --hy2: 25%; }
+  100% { --hx2: 78%; --hy2: 22%; }
+}
+
+/* Blob 3 — turquoise sea — 29s */
+@keyframes hero-b3 {
+  0%   { --hx3: 52%; --hy3: 72%; }
+  30%  { --hx3: 70%; --hy3: 52%; }
+  60%  { --hx3: 36%; --hy3: 62%; }
+  85%  { --hx3: 58%; --hy3: 80%; }
+  100% { --hx3: 52%; --hy3: 72%; }
+}
+
+/* Blob 4 — warm sand accent — 34s */
+@keyframes hero-b4 {
+  0%   { --hx4: 85%; --hy4: 78%; }
+  35%  { --hx4: 70%; --hy4: 88%; }
+  65%  { --hx4: 90%; --hy4: 60%; }
+  100% { --hx4: 85%; --hy4: 78%; }
+}
+
+.hero-gradient {
+  /* Coastal Mediterranean — sea, sage, turquoise, warm sand */
+  background:
+    radial-gradient(ellipse 60% 70% at var(--hx1) var(--hy1),
+      rgba(72, 130, 110, 0.82) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 60% at var(--hx2) var(--hy2),
+      rgba(42, 108, 162, 0.85) 0%, transparent 68%),
+    radial-gradient(ellipse 55% 65% at var(--hx3) var(--hy3),
+      rgba(68, 162, 168, 0.72) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 50% at var(--hx4) var(--hy4),
+      rgba(190, 158, 95, 0.22) 0%, transparent 60%),
+    #183448;
+  animation:
+    hero-b1 24s ease-in-out infinite,
+    hero-b2 19s ease-in-out infinite,
+    hero-b3 29s ease-in-out infinite,
+    hero-b4 34s ease-in-out infinite;
+}
+
+/* Bougainvillea divider motif */
+.bv-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bv-divider::before,
+.bv-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(232, 223, 208, 0.70);
+}
+.bv-divider-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-magenta);
+  opacity: 0.6;
+}
+
+::selection {
+  background-color: rgba(240, 216, 204, 0.85);
+  color: var(--color-charcoal);
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #fdf9f4;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(232, 223, 208, 0.70);
+  border-radius: 3px;
+}

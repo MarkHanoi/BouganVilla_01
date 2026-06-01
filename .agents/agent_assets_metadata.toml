@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "4bY8oJOjn1F74JOaeqx-i"
+uri = "file://attached_assets/BOUGANVILLA_Architecture_and_Product_Spec.md"
+type = "text"
+title = "Bougan Villa — Architecture & Product Spec"

@@ -1,0 +1,632 @@
+# Bougan Villa — Replit AI Build Prompt
+### Full-Stack Vacation Rental Agency Website + Self-Hosted Property Manager
+**Version 1.0 — Architecture Document**
+
+---
+
+## OVERVIEW
+
+Build a complete, production-ready web application for **Bougan Villa**, a boutique vacation rental agency based on the Portuguese coast. The app has two distinct surfaces:
+
+1. **Public Website** — Marketing site for guests to discover and enquire about properties
+2. **Admin Panel** — Private, password-protected property management dashboard for the owner
+
+The stack must be simple, free-to-host, and maintainable by a non-developer. No paid services required.
+
+---
+
+## TECH STACK
+
+```
+Frontend:       React (Vite) — single repo
+Styling:        Tailwind CSS + custom CSS variables
+Routing:        React Router v6
+Database:       Supabase (free tier) — Postgres + Auth + Storage
+Calendar Sync:  iCal parsing (ical.js library)
+Email:          EmailJS (free tier) — contact form submissions
+Deployment:     Replit (dev) → can export to Netlify/Vercel (free)
+Image Storage:  Supabase Storage (free tier: 1GB)
+```
+
+**No paid APIs. No Stripe. No external services beyond free tiers.**
+
+---
+
+## PROJECT STRUCTURE
+
+```
+bougan-villa/
+├── public/
+│   └── favicon.ico
+├── src/
+│   ├── main.jsx
+│   ├── App.jsx                    # Route definitions
+│   ├── index.css                  # Global CSS variables + Tailwind base
+│   │
+│   ├── lib/
+│   │   ├── supabase.js            # Supabase client init
+│   │   ├── ical.js                # iCal fetcher + parser util
+│   │   └── emailjs.js             # EmailJS helper
+│   │
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   ├── PropertyCard.jsx
+│   │   ├── BookingCalendar.jsx    # Read-only unified calendar
+│   │   └── ProtectedRoute.jsx     # Auth guard for admin
+│   │
+│   ├── pages/
+│   │   ├── Home.jsx               # Landing page
+│   │   ├── Properties.jsx         # All properties listing
+│   │   ├── PropertyDetail.jsx     # Single property page
+│   │   ├── Contact.jsx            # Contact/enquiry form
+│   │   │
+│   │   └── admin/
+│   │       ├── AdminLogin.jsx
+│   │       ├── AdminDashboard.jsx
+│   │       ├── AdminProperties.jsx
+│   │       ├── AdminCalendar.jsx
+│   │       ├── AdminBookings.jsx
+│   │       └── AdminRevenue.jsx
+│   │
+│   └── hooks/
+│       ├── useAuth.js
+│       ├── useProperties.js
+│       └── useBookings.js
+│
+├── .env                           # Supabase + EmailJS keys (never commit)
+├── .gitignore
+├── vite.config.js
+├── tailwind.config.js
+└── package.json
+```
+
+---
+
+## DATABASE SCHEMA (Supabase)
+
+Run these SQL statements in your Supabase SQL editor to set up the database.
+
+### Table: `properties`
+```sql
+create table properties (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  name text not null,
+  slug text unique not null,           -- URL slug e.g. "villa-bougainvillea"
+  type text not null,                  -- 'villa' | 'apartment'
+  location text not null,
+  region text not null,
+  description text,
+  short_description text,
+  max_guests int default 4,
+  bedrooms int default 2,
+  bathrooms int default 1,
+  tags text[],                         -- ['Pool', 'Garden', 'Beach nearby']
+  airbnb_url text,
+  booking_url text,
+  airbnb_ical_url text,                -- iCal sync URL from Airbnb
+  booking_ical_url text,               -- iCal sync URL from Booking.com
+  featured_image_url text,
+  gallery_images text[],               -- Array of Supabase Storage URLs
+  is_active boolean default true,
+  display_order int default 0
+);
+```
+
+### Table: `bookings`
+```sql
+create table bookings (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  property_id uuid references properties(id) on delete cascade,
+  guest_name text not null,
+  guest_email text,
+  guest_phone text,
+  check_in date not null,
+  check_out date not null,
+  num_guests int default 1,
+  platform text not null,             -- 'airbnb' | 'booking' | 'direct' | 'blocked'
+  status text default 'confirmed',    -- 'confirmed' | 'pending' | 'cancelled'
+  total_amount numeric(10,2),
+  currency text default 'EUR',
+  notes text,
+  is_manual boolean default false     -- true = entered by owner, false = from iCal
+);
+```
+
+### Table: `enquiries`
+```sql
+create table enquiries (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  name text not null,
+  email text not null,
+  phone text,
+  property_interest text,
+  check_in date,
+  check_out date,
+  num_guests int,
+  message text,
+  status text default 'new'           -- 'new' | 'replied' | 'closed'
+);
+```
+
+### Row Level Security (RLS)
+```sql
+-- Properties: public read, authenticated write
+alter table properties enable row level security;
+create policy "Public read properties" on properties for select using (true);
+create policy "Auth write properties" on properties for all using (auth.role() = 'authenticated');
+
+-- Bookings: authenticated only
+alter table bookings enable row level security;
+create policy "Auth all bookings" on bookings for all using (auth.role() = 'authenticated');
+
+-- Enquiries: public insert, authenticated read
+alter table enquiries enable row level security;
+create policy "Public insert enquiries" on enquiries for insert with check (true);
+create policy "Auth read enquiries" on enquiries for select using (auth.role() = 'authenticated');
+```
+
+### Seed Data (Initial Properties)
+```sql
+insert into properties (name, slug, type, location, region, short_description, description, max_guests, bedrooms, bathrooms, tags, is_active, display_order)
+values
+(
+  'Villa Bougainvillea',
+  'villa-bougainvillea',
+  'villa',
+  'Belverde, Aroeira',
+  'Setúbal Coast, Portugal',
+  'A stunning private villa in the Aroeira pine forest, minutes from one of Portugal''s finest Atlantic beaches.',
+  'Nestled in the tranquil Aroeira pine forest on the Setúbal coast, Villa Bougainvillea is a spacious, light-filled home surrounded by nature. Wake up to birdsong, spend your days at the beach, and return to a private garden and pool. The perfect retreat for families and groups seeking beauty, calm, and space.',
+  6, 3, 2,
+  ARRAY['Private Pool', 'Garden', 'Pine Forest', 'Beach 5 min', 'Free Parking', 'BBQ'],
+  true, 1
+),
+(
+  'Apartamento São Martinho',
+  'apartamento-sao-martinho',
+  'apartment',
+  'São Martinho',
+  'Silver Coast, Portugal',
+  'A bright and beautifully appointed apartment in São Martinho — charm and comfort on the silver coast.',
+  'Apartamento São Martinho is a carefully designed apartment in the heart of São Martinho, perfectly positioned to explore the silver coast. Bright interiors, warm finishes, and all the comforts of home make this an ideal base for couples or small families seeking an authentic Portuguese experience.',
+  4, 2, 1,
+  ARRAY['Central Location', 'Balcony', 'Sea Views', 'Walk to Beach', 'Cosy'],
+  true, 2
+);
+```
+
+---
+
+## ENVIRONMENT VARIABLES
+
+Create a `.env` file in the root:
+
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_EMAILJS_SERVICE_ID=your_emailjs_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
+VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
+VITE_ADMIN_PASSWORD=your_chosen_admin_password
+```
+
+---
+
+## DESIGN SYSTEM
+
+### Brand Identity
+- **Agency Name:** Bougan Villa
+- **Tagline:** "Curated stays on the Portuguese coast"
+- **Aesthetic:** Mediterranean coastal luxury — warm, editorial, organic. Sun-bleached whites, terracotta, deep greens, ocean blues.
+
+### Typography (Google Fonts)
+```html
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+```
+- **Display / Headings:** Cormorant Garamond (elegant, editorial)
+- **Body / UI:** Jost (clean, minimal)
+
+### CSS Variables
+```css
+:root {
+  --sand:        #F5EFE0;
+  --terracotta:  #C96A3A;
+  --deep-green:  #2D4A3E;
+  --cream:       #FAF7F2;
+  --charcoal:    #2B2B2B;
+  --ocean:       #4A7FA5;
+  --muted:       #8A8880;
+  --border:      #E8E2D8;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Jost', sans-serif;
+
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 40px rgba(0,0,0,0.14);
+
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
+
+### Decorative Element
+The bougainvillea flower (magenta/pink, #D4548A) is used sparingly as a brand accent — in dividers, loading states, and the favicon.
+
+---
+
+## PUBLIC WEBSITE — PAGE SPECIFICATIONS
+
+### 1. Navbar (`Navbar.jsx`)
+- Sticky, transparent on hero → white with shadow on scroll
+- Left: "Bougan Villa" wordmark in Cormorant Garamond
+- Right: Nav links — Properties | About | Contact | (admin icon, subtle)
+- Mobile: hamburger → full-screen slide-in menu
+- Smooth scroll to sections if on homepage, React Router push if on other pages
+
+### 2. Homepage (`Home.jsx`)
+
+**Hero Section**
+- Full viewport height (100vh)
+- Background: deep-green to ocean gradient with CSS grain texture overlay (SVG filter noise pseudo-element)
+- Large italic display heading: *"Stay where the light is different."*
+- Subheading: "Handpicked villas and apartments on the Portuguese coast."
+- CTA button (terracotta): "Explore Our Properties" → scrolls to properties section
+- Subtle parallax scroll effect on hero content
+- Staggered fade-in animation on load (headline first, then subheading, then button)
+
+**Properties Preview Section**
+- Section title: "Our Properties"
+- Grid of 2 PropertyCard components (loaded from Supabase)
+- Each card: featured image → property name → location → tags → short description → "View Property" button
+
+**Why Bougan Villa Section**
+- 3-column layout with icon + heading + text
+- "Personally Curated" — only homes we believe in
+- "Local Knowledge" — we know every corner of the coast
+- "Seamless Stays" — from booking to checkout, we handle it
+
+**About Section**
+- Warm editorial paragraph about the agency
+- Subtle background: --sand colour with slight texture
+
+**Contact CTA Banner**
+- Full-width terracotta band
+- "Have a question? We'd love to hear from you."
+- Button → /contact
+
+### 3. Property Detail Page (`PropertyDetail.jsx`)
+Route: `/properties/:slug`
+
+- Hero: large image with property name overlay
+- Gallery: responsive masonry or grid layout (click to lightbox)
+- Info bar: guests · bedrooms · bathrooms · location
+- Tags (pill badges)
+- Full description
+- **Availability Calendar** (read-only, merged iCal from Airbnb + Booking.com)
+  - Shows booked dates in red/blocked colour
+  - Available dates shown clearly
+  - Auto-refreshes iCal data on page load
+- Enquiry form (sends via EmailJS + saves to Supabase enquiries table)
+- "View on Airbnb" button if airbnb_url exists
+
+### 4. Contact Page (`Contact.jsx`)
+Route: `/contact`
+
+Form fields:
+- Full Name (required)
+- Email (required)
+- Phone (optional)
+- Which property? (dropdown: Villa Bougainvillea / Apartamento São Martinho / Both / Not sure yet)
+- Approximate check-in / check-out dates (date pickers, optional)
+- Number of guests (number input)
+- Message (textarea, required)
+- Submit button
+
+On submit:
+1. Save to Supabase `enquiries` table
+2. Send email notification via EmailJS
+3. Show success message with confirmation
+
+---
+
+## ADMIN PANEL — FULL SPECIFICATIONS
+
+Route prefix: `/admin`
+Authentication: Supabase Auth (email + password login, single owner account)
+
+### Admin Login (`AdminLogin.jsx`)
+Route: `/admin/login`
+- Clean, minimal login form (email + password)
+- Uses Supabase Auth `signInWithPassword()`
+- Redirect to `/admin/dashboard` on success
+- No sign-up button (admin account created manually in Supabase dashboard)
+
+### Protected Route (`ProtectedRoute.jsx`)
+- Wraps all `/admin/*` routes
+- Reads Supabase session via `useAuth` hook
+- Redirects unauthenticated users to `/admin/login`
+
+### Admin Dashboard (`AdminDashboard.jsx`)
+Route: `/admin/dashboard`
+
+**Overview cards (top row):**
+- Total active properties
+- Bookings this month
+- Revenue this month (EUR)
+- New enquiries (unread)
+
+**Quick actions:**
+- Add new booking
+- View calendar
+- Check enquiries
+
+**Recent bookings table** (last 10):
+- Property | Guest | Check-in | Check-out | Platform | Status | Amount
+
+### Admin Properties (`AdminProperties.jsx`)
+Route: `/admin/properties`
+
+**Property list** with edit/toggle active buttons for each.
+
+**Edit Property form** (inline or modal) — all fields:
+- Name, Slug, Type, Location, Region
+- Short description, Full description
+- Max guests, Bedrooms, Bathrooms
+- Tags (comma-separated input → stored as array)
+- Airbnb URL, Booking.com URL
+- **Airbnb iCal URL** — with instructions tooltip:
+  *"In Airbnb: Hosting → Calendar → Availability Settings → Export Calendar. Copy the .ics link here."*
+- **Booking.com iCal URL** — with instructions tooltip:
+  *"In Booking.com: Extranet → Rates & Availability → Availability → iCal Export. Copy the link here."*
+- Featured image upload (→ Supabase Storage)
+- Gallery images upload (multiple, → Supabase Storage)
+- Active/inactive toggle
+- Display order (number)
+
+**Save** → upserts to Supabase `properties` table.
+
+### Admin Calendar (`AdminCalendar.jsx`)
+Route: `/admin/calendar`
+
+**Unified calendar showing ALL properties and ALL bookings:**
+
+- Month view (default) with previous/next navigation
+- Property filter dropdown (All / Villa Bougainvillea / Apartamento São Martinho)
+- Platform filter (All / Airbnb / Booking.com / Direct / Blocked)
+
+**Colour legend:**
+- 🟥 Airbnb booking (red)
+- 🟦 Booking.com booking (blue)
+- 🟩 Direct booking (green)
+- ⬛ Owner blocked / maintenance (grey)
+
+**Calendar data sources (merged):**
+1. `bookings` table in Supabase (manual + imported entries)
+2. iCal URLs fetched live from `properties.airbnb_ical_url` and `properties.booking_ical_url`
+
+**iCal sync logic (`src/lib/ical.js`):**
+```
+- Fetch iCal URL via proxy (CORS issue — see note below)
+- Parse using ical.js library
+- Extract VEVENT blocks: DTSTART, DTEND, SUMMARY
+- Map to a normalised booking object: { source, property_id, check_in, check_out, summary }
+- Cache in localStorage with 15-minute TTL
+- Merge with Supabase bookings, deduplicating by date range
+```
+
+> **CORS Note:** Airbnb and Booking.com iCal URLs block direct browser fetch due to CORS. 
+> Solution: Use a Replit Express backend endpoint `/api/ical-proxy?url=ENCODED_URL` that 
+> server-side fetches the iCal and returns the raw text. This proxy is part of the same 
+> Replit project (full-stack).
+
+**Click on a day:** shows a popover with bookings that day + option to add a manual booking.
+
+**"Sync Now" button:** re-fetches all iCal URLs and refreshes the view.
+
+### Admin Bookings (`AdminBookings.jsx`)
+Route: `/admin/bookings`
+
+**Bookings table** — paginated, sortable, filterable:
+
+Columns: Property | Guest Name | Email | Check-in | Check-out | Guests | Platform | Status | Amount | Notes | Actions
+
+**Filters:** Property | Platform | Status | Date range picker
+
+**Add New Booking button** → opens modal form:
+- Property (dropdown)
+- Guest name, email, phone
+- Check-in / check-out (date pickers)
+- Number of guests
+- Platform (Airbnb / Booking.com / Direct / Blocked)
+- Status (Confirmed / Pending / Cancelled)
+- Total amount + currency
+- Notes
+
+**Edit / Delete** actions per row.
+
+**Export CSV button** — exports current filtered view as CSV file.
+
+### Admin Revenue (`AdminRevenue.jsx`)
+Route: `/admin/revenue`
+
+**Summary cards:**
+- Total revenue this year
+- Total revenue this month
+- Revenue by property (split)
+- Occupancy rate this month (booked nights ÷ available nights × 100)
+
+**Monthly revenue bar chart** (use Recharts library):
+- X-axis: months (Jan–Dec current year)
+- Y-axis: EUR
+- Two bars per month: Villa Bougainvillea (deep-green) + Apartamento São Martinho (terracotta)
+
+**Platform breakdown pie chart** (Recharts):
+- Revenue split by Airbnb / Booking.com / Direct
+
+**Bookings table** (revenue view):
+- Shows: property | check-in | check-out | nights | platform | amount | status
+- Only confirmed bookings with an amount entered
+
+**Year selector** to view previous years.
+
+---
+
+## ICAL PROXY BACKEND (Express)
+
+Since this is a full-stack Replit, add a minimal Express server for the iCal proxy:
+
+```javascript
+// server.js
+import express from 'express'
+import fetch from 'node-fetch'
+import cors from 'cors'
+
+const app = express()
+app.use(cors({ origin: true }))
+
+app.get('/api/ical-proxy', async (req, res) => {
+  const { url } = req.query
+  if (!url) return res.status(400).json({ error: 'url param required' })
+  
+  try {
+    const response = await fetch(decodeURIComponent(url), {
+      headers: { 'User-Agent': 'BouganVilla/1.0' }
+    })
+    const text = await response.text()
+    res.set('Content-Type', 'text/calendar')
+    res.send(text)
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch iCal', detail: err.message })
+  }
+})
+
+app.listen(3001, () => console.log('iCal proxy running on :3001'))
+```
+
+The Vite frontend proxies `/api` to `:3001` in `vite.config.js`:
+
+```javascript
+export default {
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3001'
+    }
+  }
+}
+```
+
+---
+
+## PACKAGES TO INSTALL
+
+```bash
+npm install \
+  react react-dom react-router-dom \
+  @supabase/supabase-js \
+  ical.js \
+  recharts \
+  emailjs-com \
+  date-fns \
+  tailwindcss autoprefixer postcss \
+  express node-fetch cors
+```
+
+---
+
+## IMAGE HANDLING
+
+All images are stored in **Supabase Storage** in a public bucket called `property-images`.
+
+**Admin upload flow:**
+1. Owner selects image file(s) in admin panel
+2. App uploads to Supabase Storage: `property-images/{property_slug}/{filename}`
+3. Supabase returns a public URL
+4. URL saved to `properties.featured_image_url` or appended to `properties.gallery_images[]`
+
+**Public placeholder images:**
+Until real photos are uploaded, display a styled placeholder div:
+
+```jsx
+// In PropertyCard.jsx
+{property.featured_image_url ? (
+  <img src={property.featured_image_url} alt={property.name} />
+) : (
+  /* REPLACE THIS WITH YOUR PHOTO — upload in Admin → Properties */
+  <div className="photo-placeholder">
+    <span>{property.name}</span>
+    <small>Photo coming soon</small>
+  </div>
+)}
+```
+
+---
+
+## ADMIN PANEL DESIGN
+
+The admin panel has a **separate, distinct design** from the public site — clean, functional, minimal. NOT the warm Mediterranean aesthetic. Think: white background, clean sans-serif (Jost), subtle blue-grey accents for admin UI.
+
+Layout:
+- Fixed left sidebar (240px): logo + nav links + logout button
+- Main content area (flex 1): page content
+- Responsive: sidebar collapses to top nav on mobile
+
+---
+
+## SECURITY NOTES
+
+- Supabase RLS policies enforce that booking/enquiry data is auth-protected
+- The admin login uses Supabase Auth (bcrypt-hashed passwords, JWT sessions)
+- The iCal proxy only fetches URLs starting with known hosts (airbnb.com, booking.com) — add a whitelist check
+- `.env` file must be in `.gitignore` — never commit keys
+- Images in Supabase Storage are in a **public** bucket (acceptable for property photos)
+
+---
+
+## SETUP INSTRUCTIONS FOR OWNER (post-build)
+
+Add these as a `SETUP.md` file in the project root:
+
+```
+1. Create free Supabase account at supabase.com
+2. Create new project → copy URL and anon key into .env
+3. Run the SQL schema in Supabase SQL editor (copy from schema.sql)
+4. Create admin account: Supabase → Authentication → Users → Invite User
+5. Create free EmailJS account at emailjs.com → add your email service
+6. Copy EmailJS keys into .env
+7. In Supabase → Storage → create public bucket called "property-images"
+8. Log into /admin/login with your Supabase credentials
+9. Go to Admin → Properties → edit each property → upload your photos
+10. Add iCal URLs from Airbnb and Booking.com in each property's settings
+```
+
+---
+
+## DELIVERABLE CHECKLIST
+
+When complete, the project must have:
+
+- [ ] Public homepage with hero, properties, about, contact CTA
+- [ ] Individual property pages with gallery + availability calendar + enquiry form
+- [ ] Contact page with form → saves to Supabase + sends email
+- [ ] Admin login (Supabase Auth)
+- [ ] Admin dashboard with stats overview
+- [ ] Admin property editor with image upload
+- [ ] Admin unified calendar with iCal sync
+- [ ] Admin bookings manager (CRUD + CSV export)
+- [ ] Admin revenue tracker with charts
+- [ ] Express iCal proxy endpoint
+- [ ] Fully responsive (mobile-first)
+- [ ] All image slots clearly labelled for owner to replace
+- [ ] `SETUP.md` with step-by-step instructions
+- [ ] `.env.example` file with all required variable names (no real values)
+
+---
+
+*Bougan Villa — Built for one owner, designed to grow.*

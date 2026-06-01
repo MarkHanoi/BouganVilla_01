@@ -1,0 +1,67 @@
+Build a complete, production-ready vacation rental agency website called "Bougan Villa" — a boutique property agency based in Portugal.
+
+## Brand & Concept
+- Name: Bougan Villa
+- Positioning: Small, curated, high-quality rental agency in the Lisbon/Setúbal coast area of Portugal
+- Tone: Warm, luxurious but approachable — Mediterranean coastal elegance. Think sun-bleached whites, terracotta, deep greens, and ocean blues. Natural textures. Nothing cold or corporate.
+- Typography: Use Google Fonts — pair "Cormorant Garamond" (display/headings) with "Jost" (body). Import both.
+
+## Color Palette (CSS variables)
+- --sand: #F5EFE0
+- --terracotta: #C96A3A
+- --deep-green: #2D4A3E
+- --cream: #FAF7F2
+- --charcoal: #2B2B2B
+- --ocean: #4A7FA5
+
+## Pages / Sections (Single Page App or multi-page, your choice)
+1. **Hero** — Full-screen, with a cinematic background (use a gradient placeholder: deep-green to ocean blue with a soft grain overlay). Headline: "Stay where the light is different." Subheadline: "Handpicked villas and apartments on the Portuguese coast." CTA button: "Explore Our Properties"
+
+2. **Our Properties** — Card grid with TWO properties:
+
+   ### Property 1 — Villa Bougainvillea
+   - Location: Belverde, Aroeira, Setúbal Coast, Portugal
+   - Type: Private Villa
+   - Description: "A stunning private villa nestled in the Aroeira pine forest, minutes from one of Portugal's most beautiful Atlantic beaches. Serene, spacious, and filled with natural light."
+   - Tags: Villa · Garden · Pool · Sleeps 6 · Beach nearby
+   - Placeholder image slot (label it clearly: "PHOTO PLACEHOLDER — upload villa photos here")
+   - Button: "View on Airbnb" → link to: https://www.airbnb.com/hosting/listings/editor/1575967103888810416 (owner will replace with public URL)
+
+   ### Property 2 — Apartamento São Martinho
+   - Location: São Martinho, Portugal
+   - Type: Apartment
+   - Description: "A bright and beautifully appointed apartment in São Martinho — the perfect base for exploring the silver coast, with charm and comfort in equal measure."
+   - Tags: Apartment · Central · Cosy · Sleeps 4
+   - Placeholder image slot (label: "PHOTO PLACEHOLDER — upload apartment photos here")
+   - Button: "Enquire Now" → mailto:info@bouganvilla.com
+
+3. **Why Bougan Villa** — 3-column icon section. Columns:
+   - "Personally Curated" — only homes we love
+   - "Local Knowledge" — we know every corner of the coast
+   - "Seamless Stays" — from booking to checkout, we handle it
+
+4. **About** — Short paragraph: "Bougan Villa is a small, passionate agency born from a love of the Portuguese coast. We list only homes we believe in — places where the light, the air, and the detail make a real difference to your stay."
+
+5. **Contact / Enquire** — Simple contact form: Name, Email, Message, which property they're interested in (dropdown: Villa Bougainvillea / Apartamento São Martinho / Both / Not sure yet), Submit button. Form should use Formspree or EmailJS placeholder.
+
+6. **Footer** — Logo text "Bougan Villa", tagline "Curated stays on the Portuguese coast", links: Instagram (placeholder #), Airbnb (placeholder #), Email.
+
+## Technical Requirements
+- HTML/CSS/JS (vanilla) OR React — choose whichever produces the most polished result
+- Fully responsive (mobile-first)
+- Smooth scroll navigation
+- Sticky header with logo + nav links
+- Subtle scroll-reveal animations on property cards and sections (use Intersection Observer or AOS library)
+- Image placeholders must be clearly labeled so owner can swap in real photos easily
+- Use CSS custom properties (variables) throughout for easy theming
+- Add a grain/noise texture overlay on the hero using CSS (pseudo-element with SVG filter or background noise)
+- The hero should have a subtle parallax effect on scroll
+
+## Image Handling Note
+The owner will provide real photos manually. All image tags should have:
+- A descriptive alt text
+- A clear HTML comment above them: <!-- REPLACE: upload your photo here -->
+- A styled placeholder div as fallback with the property name shown
+
+## Aesthetic Direction
+Mediterranean coastal luxury — warm, editorial, organic. Avoid anything that looks like a generic template. Use generous whitespace, large elegant typography for headings, and subtle earthy textures. The bougainvillea flower (magenta/pink) can be used as a subtle decorative accent motif in dividers or icons.
