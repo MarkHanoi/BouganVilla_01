@@ -1,6 +1,6 @@
 /**
  * Bougan'villa wordmark — inline SVG, transparent background.
- * Bold Cormorant Garamond serif, magenta teardrop accent, tracked subtitle.
+ * Bold Cormorant Garamond serif, magenta chevron accent, tracked subtitle.
  *
  * Props:
  *   inverted — white text (for dark / hero backgrounds)
@@ -36,19 +36,13 @@ export default function Logo({ inverted = false, className = "" }: LogoProps) {
         Bougan
       </text>
 
-      {/* ── Magenta teardrop accent ────────────────────────
-          Downward water-drop: rounded circular top arc,
-          tapered point at bottom. Four bezier segments:
-          bottom-point → left-taper → top-left-arc →
-          top-right-arc → right-taper → bottom-point.
-          Centre x=164.5, width 7px, height ~13px.
+      {/* ── Magenta downward chevron accent ────────────────
+          A compact downward-pointing solid chevron/triangle
+          sitting at the top between "Bougan" and "villa".
+          Centre x≈166, sits in the ascender zone.
       ─────────────────────────────────────────────────── */}
       <path
-        d="M 164.5 22
-           C 162 18.5 161 16   161 13.5
-           C 161 11   162.5 9.5 164.5 9.5
-           C 166.5 9.5 168 11   168 13.5
-           C 168 16   167 18.5 164.5 22 Z"
+        d="M 161 9 L 171 9 L 166 17 Z"
         fill="#C0306A"
       />
 
