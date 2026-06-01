@@ -25,45 +25,8 @@ export default function Home() {
     <>
       {/* ── Hero ───────────────────────────────────────── */}
       <section
-        className="grain-overlay relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden"
+        className="grain-overlay hero-gradient relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden"
       >
-        {/* Beach image — rotated 180° so ocean is top, sand is bottom */}
-        <img
-          src="/photos/hero-beach.png"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-          style={{ transform: "rotate(180deg)" }}
-        />
-
-        {/* Top extension — bleed ocean turquoise upward from image edge */}
-        <div
-          className="absolute top-0 left-0 right-0 pointer-events-none"
-          style={{
-            height: "38%",
-            background: "linear-gradient(to bottom, #1b9070 0%, rgba(27,144,112,0) 100%)",
-            zIndex: 1,
-          }}
-        />
-
-        {/* Bottom extension — bleed warm sand downward from image edge */}
-        <div
-          className="absolute bottom-0 left-0 right-0 pointer-events-none"
-          style={{
-            height: "38%",
-            background: "linear-gradient(to top, #c4925a 0%, rgba(196,146,90,0) 100%)",
-            zIndex: 1,
-          }}
-        />
-
-        {/* Text-readability overlay — darkens the mid-zone where copy sits */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.52) 38%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.18) 100%)",
-            zIndex: 2,
-          }}
-        />
 
         <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-8">
@@ -109,142 +72,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Shore: sand-to-cream transition ─────────────────
-           5 SVG wave layers continuing the warm sand palette
-           from the hero bottom into the cream page background.
-           Colors: warm sandy gold → light sand → cream foam.
+      {/* ── Shore transition — real beach photo ─────────────
+           Rotated 180°: ocean at top (blends into dark hero),
+           sand at bottom (blends into warm cream content).
+           Gradient fades at both edges for a seamless join.
       ──────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden"
-        style={{ height: "240px", marginTop: "-1px" }}
+        style={{ height: "320px", marginTop: "-1px" }}
         aria-hidden="true"
       >
-        {/* Depth gradient — warm sand at top, fades to cream */}
+        <img
+          src="/photos/hero-beach.png"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{ transform: "rotate(180deg)" }}
+        />
+        {/* Top fade — blends into the dark hero */}
         <div
-          className="absolute inset-0"
+          className="absolute top-0 left-0 right-0 pointer-events-none"
           style={{
-            background: [
-              "linear-gradient(to bottom,",
-              "  #c4925a 0%,",
-              "  #cc9e68 18%,",
-              "  #d4aa78 36%,",
-              "  rgba(220,178,130,0.55) 65%,",
-              "  rgba(220,178,130,0.10) 85%,",
-              "  transparent 100%",
-              ")",
-            ].join(""),
+            height: "45%",
+            background: "linear-gradient(to bottom, #183448 0%, transparent 100%)",
           }}
         />
-
-        {/* Wave 1 — back, deep warm sand, slowest (26s) */}
-        <svg
-          className="absolute"
-          style={{ bottom: 0, width: "200%", height: "240px", animation: "wave-roll-a 26s linear infinite" }}
-          viewBox="0 0 2880 240"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,148
-               C 73,120 145,175 290,148
-               C 385,120 575,176 670,148
-               C 760,120 940,176 1030,148
-               C 1133,120 1338,176 1440,148
-               C 1513,120 1585,175 1730,148
-               C 1825,120 2015,176 2110,148
-               C 2200,120 2380,176 2470,148
-               C 2573,120 2778,176 2880,148
-               L2880,240 L0,240 Z"
-            fill="#b07840"
-          />
-        </svg>
-
-        {/* Wave 2 — medium sand, medium-slow (18s) */}
-        <svg
-          className="absolute"
-          style={{ bottom: 0, width: "200%", height: "190px", animation: "wave-roll-b 18s linear infinite" }}
-          viewBox="0 0 2880 190"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,118
-               C 80,94 160,142 320,118
-               C 408,94 583,142 670,118
-               C 770,94 970,142 1070,118
-               C 1163,94 1348,142 1440,118
-               C 1520,94 1600,142 1760,118
-               C 1848,94 2023,142 2110,118
-               C 2210,94 2410,142 2510,118
-               C 2603,94 2788,142 2880,118
-               L2880,190 L0,190 Z"
-            fill="rgba(192,140,80,0.88)"
-          />
-        </svg>
-
-        {/* Wave 3 — lighter sand, medium (12s) */}
-        <svg
-          className="absolute"
-          style={{ bottom: 0, width: "200%", height: "145px", animation: "wave-roll-c 12s linear infinite" }}
-          viewBox="0 0 2880 145"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,90
-               C 88,68 175,112 350,90
-               C 428,68 583,112 660,90
-               C 760,68 960,112 1060,90
-               C 1155,68 1345,112 1440,90
-               C 1528,68 1615,112 1790,90
-               C 1868,68 2023,112 2100,90
-               C 2200,68 2400,112 2500,90
-               C 2595,68 2785,112 2880,90
-               L2880,145 L0,145 Z"
-            fill="rgba(208,162,100,0.82)"
-          />
-        </svg>
-
-        {/* Wave 4 — pale sand, faster (8s) */}
-        <svg
-          className="absolute"
-          style={{ bottom: 0, width: "200%", height: "94px", animation: "wave-roll-d 8s linear infinite" }}
-          viewBox="0 0 2880 94"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,58
-               C 70,38 140,78 280,58
-               C 378,38 573,78 670,58
-               C 758,38 933,78 1020,58
-               C 1125,38 1335,78 1440,58
-               C 1510,38 1580,78 1720,58
-               C 1818,38 2013,78 2110,58
-               C 2198,38 2373,78 2460,58
-               C 2565,38 2775,78 2880,58
-               L2880,94 L0,94 Z"
-            fill="rgba(224,184,130,0.75)"
-          />
-        </svg>
-
-        {/* Wave 5 — cream foam edge, fastest (5s) */}
-        <svg
-          className="absolute"
-          style={{ bottom: 0, width: "200%", height: "42px", animation: "wave-roll-e 5s linear infinite" }}
-          viewBox="0 0 2880 42"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,26
-               C 83,12 165,40 330,26
-               C 403,12 548,40 620,26
-               C 725,12 935,40 1040,26
-               C 1140,12 1340,40 1440,26
-               C 1523,12 1605,40 1770,26
-               C 1843,12 1988,40 2060,26
-               C 2165,12 2375,40 2480,26
-               C 2580,12 2780,40 2880,26
-               L2880,42 L0,42 Z"
-            fill="rgba(245,232,210,0.65)"
-          />
-        </svg>
+        {/* Bottom fade — dissolves into the warm cream page */}
+        <div
+          className="absolute bottom-0 left-0 right-0 pointer-events-none"
+          style={{
+            height: "45%",
+            background: "linear-gradient(to top, #f0e8d8 0%, transparent 100%)",
+          }}
+        />
       </div>
 
       {/* ── Manifesto strip ────────────────────────────── */}
