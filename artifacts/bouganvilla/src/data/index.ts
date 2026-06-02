@@ -106,10 +106,9 @@ export const properties: Property[] = [
     bedrooms: 2,
     bathrooms: 1,
     guests: 4,
-    image: "https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?auto=format&fit=crop&w=1200&q=80",
+    image: "/photos/apartamento-sao-martinho/01_main.jpg",
     images: [
-      "https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80",
+      "/photos/apartamento-sao-martinho/01_main.jpg",
     ],
     amenities: ["Central Location", "Terrace", "Silver Coast", "Beach Walk", "Wi-Fi"],
     tags: ["Apartment", "Central", "Cosy", "Sleeps 4"],
