@@ -81,11 +81,8 @@ export default function Home() {
       {/* ── Our Properties ──────────────────────────────── */}
       <section className="py-16 lg:py-24 px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="text-center mb-14 lg:mb-20">
-          <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>
-            {t.home.collection.label}
-          </p>
           <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">
-            {t.home.collection.heading}
+            {t.home.collection.label}
           </h2>
         </div>
 
