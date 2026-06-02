@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 import Areas from "./pages/Areas";
+import DestinationDetail from "./pages/DestinationDetail";
 import Owners from "./pages/Owners";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -43,6 +44,7 @@ export default function App() {
               <Route path="/properties" component={Properties} />
               <Route path="/properties/:id" component={PropertyDetail} />
               <Route path="/areas" component={Areas} />
+              <Route path="/areas/:id" component={DestinationDetail} />
               <Route path="/owners" component={Owners} />
               <Route path="/about" component={About} />
               <Route path="/contact" component={Contact} />
