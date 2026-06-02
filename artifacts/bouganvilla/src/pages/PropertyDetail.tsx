@@ -21,8 +21,21 @@ function Lightbox({
   t: ReturnType<typeof useT>;
 }) {
   const [current, setCurrent] = useState(startIndex);
-  const prev = useCallback(() => setCurrent((i) => (i - 1 + images.length) % images.length), [images.length]);
-  const next = useCallback(() => setCurrent((i) => (i + 1) % images.length), [images.length]);
+  const [loaded, setLoaded] = useState(false);
+
+  const prev = useCallback(() => {
+    setLoaded(false);
+    setCurrent((i) => (i - 1 + images.length) % images.length);
+  }, [images.length]);
+
+  const next = useCallback(() => {
+    setLoaded(false);
+    setCurrent((i) => (i + 1) % images.length);
+  }, [images.length]);
+
+  useEffect(() => {
+    setLoaded(false);
+  }, [current]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -41,9 +54,10 @@ function Lightbox({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: "rgba(8,12,18,0.97)" }}
+      style={{ backgroundColor: "rgba(8,12,18,0.96)" }}
       onClick={onClose}
     >
+      {/* Close */}
       <button
         onClick={onClose}
         className="absolute top-5 right-5 z-10 flex items-center gap-2 text-white/50 hover:text-white transition-colors"
@@ -51,43 +65,67 @@ function Lightbox({
         <X size={18} strokeWidth={1.5} />
         <span className="text-[10px] tracking-[0.2em] uppercase font-light">{t.detail.close}</span>
       </button>
-      <div className="absolute top-5 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.25em] uppercase text-white/35 font-light">
+
+      {/* Counter */}
+      <div className="absolute top-5 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.25em] uppercase text-white/40 font-light select-none">
         {current + 1} / {images.length}
       </div>
+
+      {/* Prev arrow */}
       <button
         onClick={(e) => { e.stopPropagation(); prev(); }}
-        className="absolute left-4 lg:left-8 z-10 w-12 h-12 flex items-center justify-center text-white/40 hover:text-white transition-colors"
+        className="absolute left-4 lg:left-8 z-10 flex items-center justify-center w-12 h-12 border border-white/20 hover:border-white/60 hover:bg-white/10 transition-all"
+        aria-label="Previous photo"
       >
-        <ChevronLeft size={30} strokeWidth={1} />
+        <ChevronLeft size={22} strokeWidth={1.5} className="text-white" />
       </button>
+
+      {/* Image */}
       <div
-        className="max-w-[90vw] max-h-[88vh] flex items-center justify-center"
+        className="flex items-center justify-center"
+        style={{ maxWidth: "88vw", maxHeight: "84vh" }}
         onClick={(e) => e.stopPropagation()}
       >
+        {!loaded && (
+          <div className="absolute flex items-center justify-center">
+            <div className="w-6 h-6 border border-white/30 border-t-white/80 rounded-full animate-spin" />
+          </div>
+        )}
         <img
-          key={current}
           src={images[current]}
-          alt={`${t.detail.photos} ${current + 1}`}
-          className="max-w-full max-h-[88vh] object-contain"
-          style={{ animation: "fadeInScale 0.2s ease" }}
+          alt={`Photo ${current + 1}`}
+          onLoad={() => setLoaded(true)}
+          style={{
+            maxWidth: "88vw",
+            maxHeight: "84vh",
+            objectFit: "contain",
+            display: "block",
+            opacity: loaded ? 1 : 0,
+            transition: "opacity 0.25s ease",
+          }}
         />
       </div>
+
+      {/* Next arrow */}
       <button
         onClick={(e) => { e.stopPropagation(); next(); }}
-        className="absolute right-4 lg:right-8 z-10 w-12 h-12 flex items-center justify-center text-white/40 hover:text-white transition-colors"
+        className="absolute right-4 lg:right-8 z-10 flex items-center justify-center w-12 h-12 border border-white/20 hover:border-white/60 hover:bg-white/10 transition-all"
+        aria-label="Next photo"
       >
-        <ChevronRight size={30} strokeWidth={1} />
+        <ChevronRight size={22} strokeWidth={1.5} className="text-white" />
       </button>
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2" onClick={(e) => e.stopPropagation()}>
         {images.map((_, i) => (
           <button
             key={i}
-            onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+            onClick={() => { setLoaded(false); setCurrent(i); }}
             className="rounded-full transition-all"
             style={{
               width: i === current ? 20 : 6,
               height: 6,
-              backgroundColor: i === current ? "white" : "rgba(255,255,255,0.28)",
+              backgroundColor: i === current ? "white" : "rgba(255,255,255,0.25)",
             }}
           />
         ))}
