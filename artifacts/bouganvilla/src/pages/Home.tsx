@@ -94,26 +94,26 @@ export default function Home() {
         aria-hidden="true"
       >
         <img
-          src="/photos/hero-beach.png"
+          src="/photos/hero-beach.jpg"
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-center"
           style={{ transform: "rotate(180deg)" }}
         />
-        {/* Top fade — tiny solid lock (~50px) then quick dissolve into image */}
+        {/* Top fade — locks to #183448 then dissolves through the bright teal ocean */}
         <div
           className="absolute top-0 left-0 right-0 pointer-events-none"
           style={{
-            height: "30%",
-            background: "linear-gradient(to bottom, #183448 0%, #183448 12%, transparent 100%)",
+            height: "45%",
+            background: "linear-gradient(to bottom, #183448 0%, #183448 8%, transparent 100%)",
             zIndex: 1,
           }}
         />
-        {/* Bottom fade — tiny solid lock (~50px) then quick dissolve into image */}
+        {/* Bottom fade — locks to page cream then dissolves through warm sand */}
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none"
           style={{
-            height: "30%",
-            background: "linear-gradient(to top, #f0e8d8 0%, #f0e8d8 12%, transparent 100%)",
+            height: "40%",
+            background: "linear-gradient(to top, #f0e8d8 0%, #f0e8d8 8%, transparent 100%)",
             zIndex: 1,
           }}
         />
