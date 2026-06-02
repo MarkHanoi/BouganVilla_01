@@ -108,12 +108,14 @@ export default function Home() {
             zIndex: 1,
           }}
         />
-        {/* Bottom fade — long pure dissolve, no solid band, sand melts into page cream */}
+        {/* Bottom fade — bridges sand (#D5B185) to page cream (#f0e8d8).
+            Using rgba sand as the transparent stop avoids CSS interpolating
+            through black, giving a clean warm-toned dissolve. */}
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none"
           style={{
-            height: "72%",
-            background: "linear-gradient(to top, #f0e8d8 0%, transparent 100%)",
+            height: "78%",
+            background: "linear-gradient(to top, #f0e8d8 0%, #f0e8d8 6%, rgba(213,177,133,0) 100%)",
             zIndex: 1,
           }}
         />
