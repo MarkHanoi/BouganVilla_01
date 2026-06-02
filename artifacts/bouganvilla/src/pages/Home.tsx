@@ -90,7 +90,7 @@ export default function Home() {
       ──────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden"
-        style={{ height: "320px", marginTop: "-1px" }}
+        style={{ height: "340px", marginTop: "-1px" }}
         aria-hidden="true"
       >
         <img
@@ -99,21 +99,21 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover object-center"
           style={{ transform: "rotate(180deg)" }}
         />
-        {/* Top fade — locks to #183448 then dissolves through the bright teal ocean */}
+        {/* Top fade — pure smooth dissolve from dark hero into teal ocean */}
         <div
           className="absolute top-0 left-0 right-0 pointer-events-none"
           style={{
             height: "45%",
-            background: "linear-gradient(to bottom, #183448 0%, #183448 8%, transparent 100%)",
+            background: "linear-gradient(to bottom, #183448 0%, #183448 5%, transparent 100%)",
             zIndex: 1,
           }}
         />
-        {/* Bottom fade — locks to page cream then dissolves through warm sand */}
+        {/* Bottom fade — long pure dissolve, no solid band, sand melts into page cream */}
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none"
           style={{
-            height: "40%",
-            background: "linear-gradient(to top, #f0e8d8 0%, #f0e8d8 8%, transparent 100%)",
+            height: "72%",
+            background: "linear-gradient(to top, #f0e8d8 0%, transparent 100%)",
             zIndex: 1,
           }}
         />
