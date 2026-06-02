@@ -42,7 +42,7 @@ export default function Home() {
 
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none"
-          style={{ height: "18%", background: "linear-gradient(to top, #183448 0%, #183448 30%, transparent 100%)", zIndex: 3 }}
+          style={{ height: "18%", background: "linear-gradient(to top, #203e4e 0%, #203e4e 30%, transparent 100%)", zIndex: 3 }}
         />
       </section>
 
@@ -65,7 +65,7 @@ export default function Home() {
         />
         <div
           className="absolute top-0 left-0 right-0 pointer-events-none"
-          style={{ height: "45%", background: "linear-gradient(to bottom, #183448 0%, #183448 5%, transparent 100%)", zIndex: 1 }}
+          style={{ height: "45%", background: "linear-gradient(to bottom, #203e4e 0%, #203e4e 5%, transparent 100%)", zIndex: 1 }}
         />
       </div>
 

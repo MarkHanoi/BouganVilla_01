@@ -9,7 +9,7 @@ export default function Owners() {
     <>
       <section
         className="grain-overlay relative pt-36 pb-20 px-6 lg:px-12 overflow-hidden"
-        style={{ background: `linear-gradient(135deg, var(--color-deep-green) 0%, #1e3a5f 100%)` }}
+        style={{ background: `linear-gradient(135deg, var(--color-deep-green) 0%, #2a5268 100%)` }}
       >
         <div className="max-w-7xl mx-auto relative z-10">
           <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-4" style={{ color: "var(--color-sand)" }}>
