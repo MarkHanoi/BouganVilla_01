@@ -70,6 +70,17 @@ export default function Home() {
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 z-10">
           <div className="w-px h-10 bg-white/20" />
         </div>
+
+        {/* Bottom colour lock — clamps the hero exit to exactly #183448
+            regardless of where the animated blobs sit at any given moment */}
+        <div
+          className="absolute bottom-0 left-0 right-0 pointer-events-none"
+          style={{
+            height: "18%",
+            background: "linear-gradient(to top, #183448 0%, #183448 30%, transparent 100%)",
+            zIndex: 3,
+          }}
+        />
       </section>
 
       {/* ── Shore transition — real beach photo ─────────────
@@ -88,20 +99,24 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover object-center"
           style={{ transform: "rotate(180deg)" }}
         />
-        {/* Top fade — blends into the dark hero */}
+        {/* Top fade — solid #183448 for first 35%, then dissolves into image.
+            Matches the hero colour lock exactly — zero discontinuity. */}
         <div
           className="absolute top-0 left-0 right-0 pointer-events-none"
           style={{
-            height: "45%",
-            background: "linear-gradient(to bottom, #183448 0%, transparent 100%)",
+            height: "65%",
+            background: "linear-gradient(to bottom, #183448 0%, #183448 35%, transparent 100%)",
+            zIndex: 1,
           }}
         />
-        {/* Bottom fade — dissolves into the warm cream page */}
+        {/* Bottom fade — solid #f0e8d8 for first 35%, then dissolves into image.
+            Matches the page body background exactly — zero discontinuity. */}
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none"
           style={{
-            height: "45%",
-            background: "linear-gradient(to top, #f0e8d8 0%, transparent 100%)",
+            height: "65%",
+            background: "linear-gradient(to top, #f0e8d8 0%, #f0e8d8 35%, transparent 100%)",
+            zIndex: 1,
           }}
         />
       </div>
