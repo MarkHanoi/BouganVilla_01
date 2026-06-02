@@ -25,9 +25,6 @@ export default function Home() {
             </span>
           </h1>
 
-          <p className="text-base lg:text-lg text-white/60 font-light leading-relaxed max-w-lg mx-auto mb-10">
-            {t.home.hero.sub}
-          </p>
 
           <Link
             href="/properties"
