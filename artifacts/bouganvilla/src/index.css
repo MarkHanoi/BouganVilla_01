@@ -3,7 +3,7 @@
 @theme {
   --font-serif: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Jost", system-ui, -apple-system, sans-serif;
-  --font-body: "EB Garamond", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
 
   /* Brand palette — section backgrounds are glass so the flow shows through */
   --color-sand:        rgba(245, 239, 224, 0.82);
@@ -51,14 +51,14 @@ html {
 }
 
 body {
-  font-family: "EB Garamond", Georgia, serif;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
   background-color: #f0e8d8;
   color: var(--color-charcoal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
-  font-size: 17px;
-  line-height: 1.7;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.75;
 }
 
 .font-serif {

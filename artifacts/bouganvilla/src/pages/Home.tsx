@@ -50,7 +50,7 @@ export default function Home() {
             </em>
           </h1>
 
-          <p className="text-base lg:text-lg text-white/60 font-light leading-relaxed max-w-md mx-auto mb-10">
+          <p className="text-base lg:text-lg text-white/60 font-light leading-relaxed max-w-lg mx-auto mb-10">
             Handpicked villas and apartments on the Portuguese coast.
           </p>
 
