@@ -27,8 +27,8 @@ export default function Owners() {
           </p>
           <a
             href="mailto:info@bouganvilla.com"
-            className="inline-flex items-center gap-3 px-8 py-4 text-[11px] tracking-[0.2em] uppercase font-medium text-white transition-colors"
-            style={{ backgroundColor: "var(--color-terracotta)" }}
+            className="inline-flex items-center gap-3 px-8 py-4 text-[11px] tracking-[0.2em] uppercase font-medium transition-colors hover:bg-white/90"
+            style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
           >
             {t.owners.hero.cta}
             <Mail size={13} />

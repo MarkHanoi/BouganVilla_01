@@ -17,14 +17,6 @@ export default function Home() {
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="grain-overlay hero-gradient relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
         <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="h-px w-12 bg-white/30" />
-            <span className="text-[10px] tracking-[0.35em] uppercase font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>
-              {t.home.hero.tagline}
-            </span>
-            <div className="h-px w-12 bg-white/30" />
-          </div>
-
           <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] leading-[1.05] text-white mb-6">
             {t.home.hero.line1}
             <br />
@@ -39,8 +31,8 @@ export default function Home() {
 
           <Link
             href="/properties"
-            className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:gap-5"
-            style={{ backgroundColor: "var(--color-terracotta)", color: "white" }}
+            className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:gap-5 hover:bg-white/90"
+            style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
           >
             {t.home.hero.cta}
             <ArrowRight size={14} />
