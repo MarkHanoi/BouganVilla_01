@@ -1,21 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { cn } from "../lib/utils";
 import Logo from "./Logo";
-
-const navLinks = [
-  { href: "/properties", label: "Properties" },
-  { href: "/areas", label: "Destinations" },
-  { href: "/owners", label: "For Owners" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
+import { useT, useLang } from "../lib/i18n/context";
+import { LANGUAGES } from "../lib/i18n/translations";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const [location] = useLocation();
+  const t = useT();
+  const { lang, setLang } = useLang();
+  const langRef = useRef<HTMLDivElement>(null);
 
   const isHome = location === "/";
 
@@ -27,9 +25,30 @@ export default function Navbar() {
 
   useEffect(() => {
     setMenuOpen(false);
+    setLangOpen(false);
   }, [location]);
 
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const transparent = isHome && !scrolled && !menuOpen;
+
+  const navLinks = [
+    { href: "/properties", label: t.nav.properties },
+    { href: "/areas", label: t.nav.destinations },
+    { href: "/owners", label: t.nav.forOwners },
+    { href: "/about", label: t.nav.about },
+    { href: "/contact", label: t.nav.contact },
+  ];
+
+  const currentLang = LANGUAGES.find((l) => l.code === lang)!;
 
   return (
     <header
@@ -48,7 +67,7 @@ export default function Navbar() {
           />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-7">
+        <nav className="hidden lg:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -63,6 +82,56 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          {/* Language Switcher */}
+          <div ref={langRef} className="relative">
+            <button
+              onClick={() => setLangOpen((v) => !v)}
+              className={cn(
+                "flex items-center gap-1 text-[11px] tracking-[0.1em] font-light transition-colors duration-200",
+                transparent
+                  ? "text-white/60 hover:text-white"
+                  : "text-[var(--color-charcoal-subtle)] hover:text-[var(--color-charcoal)]",
+              )}
+              aria-label="Select language"
+            >
+              {currentLang.label}
+              <ChevronDown
+                size={10}
+                strokeWidth={1.5}
+                className={cn("transition-transform duration-200", langOpen ? "rotate-180" : "")}
+              />
+            </button>
+
+            {langOpen && (
+              <div
+                className="absolute right-0 top-full mt-2 py-1.5 min-w-[120px] border border-[var(--color-sand-border)] shadow-lg z-50"
+                style={{ backgroundColor: "var(--color-cream)" }}
+              >
+                {LANGUAGES.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => { setLang(l.code); setLangOpen(false); }}
+                    className={cn(
+                      "w-full flex items-center justify-between px-4 py-2 text-[11px] tracking-[0.08em] font-light transition-colors text-left",
+                      l.code === lang
+                        ? "text-[var(--color-terracotta)]"
+                        : "text-[var(--color-charcoal-muted)] hover:text-[var(--color-charcoal)] hover:bg-[var(--color-sand)]/40",
+                    )}
+                  >
+                    <span>{l.label}</span>
+                    <span
+                      className="text-[9px] tracking-[0.05em] font-light"
+                      style={{ color: "var(--color-charcoal-subtle)" }}
+                    >
+                      {l.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <Link
             href="/contact"
             className={cn(
@@ -72,7 +141,7 @@ export default function Navbar() {
                 : "border-[var(--color-charcoal)] text-[var(--color-charcoal)] hover:bg-[var(--color-charcoal)] hover:text-white",
             )}
           >
-            Enquire
+            {t.nav.enquire}
           </Link>
         </nav>
 
@@ -103,8 +172,34 @@ export default function Navbar() {
             href="/contact"
             className="mt-1 px-4 py-2.5 text-[11px] tracking-[0.12em] uppercase font-light border border-[var(--color-charcoal)] text-[var(--color-charcoal)] text-center hover:bg-[var(--color-charcoal)] hover:text-white transition-colors"
           >
-            Enquire
+            {t.nav.enquire}
           </Link>
+
+          {/* Mobile language grid */}
+          <div className="pt-3 border-t border-[var(--color-sand-border)]">
+            <p
+              className="text-[9px] tracking-[0.25em] uppercase font-medium mb-3"
+              style={{ color: "var(--color-charcoal-subtle)" }}
+            >
+              Language
+            </p>
+            <div className="grid grid-cols-4 gap-1.5">
+              {LANGUAGES.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => { setLang(l.code); setMenuOpen(false); }}
+                  className={cn(
+                    "py-2 text-[10px] tracking-[0.1em] font-light border transition-colors",
+                    l.code === lang
+                      ? "border-[var(--color-terracotta)] text-[var(--color-terracotta)]"
+                      : "border-[var(--color-sand-border)] text-[var(--color-charcoal-muted)] hover:border-[var(--color-charcoal-muted)]",
+                  )}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </header>

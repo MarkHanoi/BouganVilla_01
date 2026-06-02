@@ -1,0 +1,1 @@
+- [i18n system](i18n-system.md) — 8-language dropdown in navbar, full page translations, localStorage persistence

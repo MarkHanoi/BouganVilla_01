@@ -1,24 +1,24 @@
 import { Link } from "wouter";
 import { ArrowRight, BedDouble, Bath, Users, ExternalLink } from "lucide-react";
 import { properties } from "../data";
+import { useT } from "../lib/i18n/context";
 
 export default function Properties() {
+  const t = useT();
+
   return (
     <>
       <div className="pt-20 lg:pt-28" />
 
       <section className="px-6 lg:px-12 max-w-7xl mx-auto pb-6 pt-10">
-        <p
-          className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3"
-          style={{ color: "var(--color-terracotta)" }}
-        >
-          Our Collection
+        <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>
+          {t.properties.label}
         </p>
         <h1 className="font-serif text-5xl lg:text-6xl text-[var(--color-charcoal)]">
-          Our Properties
+          {t.properties.heading}
         </h1>
         <p className="mt-4 text-sm text-[var(--color-charcoal-muted)] font-light max-w-md leading-relaxed">
-          Two homes. Both exceptional. Both chosen because we believe in them.
+          {t.properties.sub}
         </p>
       </section>
 
@@ -27,8 +27,6 @@ export default function Properties() {
           {properties.map((property, i) => (
             <article key={property.id}>
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 overflow-hidden">
-
-                {/* ── Clickable image ─────────────────────────── */}
                 <Link
                   href={`/properties/${property.id}`}
                   className={`lg:col-span-3 relative aspect-[4/3] lg:aspect-auto min-h-[400px] overflow-hidden group block ${i % 2 === 1 ? "lg:order-2" : ""}`}
@@ -38,48 +36,40 @@ export default function Properties() {
                     alt={`${property.name} — ${property.area}, ${property.region}`}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   />
-                  {/* Subtle dark overlay on hover */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
-                  {/* Type badge */}
                   <div
                     className="absolute top-5 left-5 px-4 py-1.5 text-[10px] tracking-[0.2em] uppercase font-medium text-white"
                     style={{ backgroundColor: "var(--color-terracotta)" }}
                   >
-                    {property.type === "villa" ? "Villa" : "Apartment"}
+                    {property.type === "villa" ? t.properties.villa : t.properties.apartment}
                   </div>
 
-                  {/* Stats overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center gap-6">
                     <span className="flex items-center gap-1.5 text-xs text-white/80 font-light">
-                      <BedDouble size={13} strokeWidth={1.5} /> {property.bedrooms} beds
+                      <BedDouble size={13} strokeWidth={1.5} /> {property.bedrooms} {t.properties.beds}
                     </span>
                     <span className="flex items-center gap-1.5 text-xs text-white/80 font-light">
-                      <Bath size={13} strokeWidth={1.5} /> {property.bathrooms} baths
+                      <Bath size={13} strokeWidth={1.5} /> {property.bathrooms} {t.properties.baths}
                     </span>
                     <span className="flex items-center gap-1.5 text-xs text-white/80 font-light">
-                      <Users size={13} strokeWidth={1.5} /> sleeps {property.guests}
+                      <Users size={13} strokeWidth={1.5} /> {t.properties.sleeps} {property.guests}
                     </span>
                   </div>
 
-                  {/* "View property" hint on hover */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="bg-white/90 backdrop-blur-sm text-[var(--color-charcoal)] text-[10px] tracking-[0.2em] uppercase font-medium px-5 py-2.5">
-                      View Property
+                      {t.properties.viewProperty}
                     </span>
                   </div>
                 </Link>
 
-                {/* ── Content block ───────────────────────────── */}
                 <div
                   className={`lg:col-span-2 flex flex-col justify-center px-8 lg:px-14 py-12 lg:py-16 border border-[var(--color-sand-border)] border-t-0 lg:border-t ${i % 2 === 1 ? "lg:order-1 lg:border-r-0" : "lg:border-l-0"}`}
                   style={{ backgroundColor: "var(--color-cream)" }}
                 >
-                  <p
-                    className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3"
-                    style={{ color: "var(--color-charcoal-subtle)" }}
-                  >
+                  <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-charcoal-subtle)" }}>
                     {property.area} · {property.region}
                   </p>
                   <Link href={`/properties/${property.id}`} className="group/title">
@@ -91,7 +81,6 @@ export default function Properties() {
                     {property.description}
                   </p>
 
-                  {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-10">
                     {property.tags.map((tag) => (
                       <span
@@ -103,7 +92,6 @@ export default function Properties() {
                     ))}
                   </div>
 
-                  {/* Buttons — side by side */}
                   <div className="flex flex-wrap gap-3">
                     <a
                       href={property.cta.href}
@@ -119,7 +107,7 @@ export default function Properties() {
                       href={`/properties/${property.id}`}
                       className="inline-flex items-center gap-2 px-6 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium border border-[var(--color-charcoal-muted)]/30 text-[var(--color-charcoal-muted)] hover:border-[var(--color-charcoal)] hover:text-[var(--color-charcoal)] transition-all"
                     >
-                      Learn More
+                      {t.properties.learnMore}
                       <ArrowRight size={12} />
                     </Link>
                   </div>
@@ -130,23 +118,19 @@ export default function Properties() {
         </div>
       </section>
 
-      {/* ── Bottom CTA ──────────────────────────────────── */}
-      <section
-        className="py-16 lg:py-20 px-6 text-center"
-        style={{ backgroundColor: "var(--color-sand)" }}
-      >
+      <section className="py-16 lg:py-20 px-6 text-center" style={{ backgroundColor: "var(--color-sand)" }}>
         <p className="font-serif text-2xl lg:text-3xl text-[var(--color-charcoal)] mb-4">
-          Not sure which property is right for you?
+          {t.properties.cta.heading}
         </p>
         <p className="text-sm text-[var(--color-charcoal-muted)] font-light mb-8">
-          Tell us about your trip and we'll help you choose.
+          {t.properties.cta.body}
         </p>
         <Link
           href="/contact"
           className="inline-flex items-center gap-3 px-8 py-3.5 text-[11px] tracking-[0.2em] uppercase font-medium text-white transition-colors hover:opacity-90"
           style={{ backgroundColor: "var(--color-deep-green)" }}
         >
-          Get in Touch
+          {t.properties.cta.button}
           <ArrowRight size={13} />
         </Link>
       </section>

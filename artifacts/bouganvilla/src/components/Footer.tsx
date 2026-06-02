@@ -1,8 +1,11 @@
 import { Link } from "wouter";
 import { Instagram, Mail } from "lucide-react";
 import Logo from "./Logo";
+import { useT } from "../lib/i18n/context";
 
 export default function Footer() {
+  const t = useT();
+
   return (
     <footer style={{ backgroundColor: "var(--color-deep-green)" }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-14 lg:py-16">
@@ -10,13 +13,13 @@ export default function Footer() {
           <div>
             <Logo inverted className="h-10 w-auto mb-4" />
             <p className="text-sm text-white/50 font-light leading-relaxed max-w-xs">
-              Curated stays on the Portuguese coast.
+              {t.footer.tagline}
             </p>
           </div>
 
           <div>
             <p className="text-[10px] tracking-[0.25em] uppercase font-medium text-white/40 mb-4">
-              Our Properties
+              {t.footer.propertiesLabel}
             </p>
             <ul className="space-y-2.5">
               <li>
@@ -40,7 +43,7 @@ export default function Footer() {
 
           <div>
             <p className="text-[10px] tracking-[0.25em] uppercase font-medium text-white/40 mb-4">
-              Connect
+              {t.footer.connectLabel}
             </p>
             <ul className="space-y-3">
               <li>
@@ -83,18 +86,15 @@ export default function Footer() {
 
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/30 font-light">
-            © {new Date().getFullYear()} Bougan Villa. All rights reserved.
+            © {new Date().getFullYear()} Bougan Villa. {t.footer.copyright}
           </p>
           <div className="flex gap-6">
-            {["Privacy Policy", "Terms & Conditions"].map((l) => (
-              <a
-                key={l}
-                href="#"
-                className="text-xs text-white/30 hover:text-white/60 transition-colors font-light"
-              >
-                {l}
-              </a>
-            ))}
+            <a href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors font-light">
+              {t.footer.privacy}
+            </a>
+            <a href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors font-light">
+              {t.footer.terms}
+            </a>
           </div>
         </div>
       </div>

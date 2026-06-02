@@ -8,6 +8,7 @@ import Areas from "./pages/Areas";
 import Owners from "./pages/Owners";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import { LanguageProvider } from "./lib/i18n/context";
 
 function WhatsAppButton() {
   return (
@@ -31,10 +32,8 @@ export default function App() {
   const [location] = useLocation();
 
   return (
-    <>
-      {/* Fixed living background — flows beneath all content */}
+    <LanguageProvider>
       <div className="page-flow-bg" />
-
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1">
@@ -61,6 +60,6 @@ export default function App() {
         <Footer />
         <WhatsAppButton />
       </div>
-    </>
+    </LanguageProvider>
   );
 }

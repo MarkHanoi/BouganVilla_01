@@ -6,16 +6,19 @@ import {
 } from "lucide-react";
 import { properties } from "../data";
 import AvailabilityCalendar from "../components/AvailabilityCalendar";
+import { useT } from "../lib/i18n/context";
 
 /* ── Lightbox ──────────────────────────────────────── */
 function Lightbox({
   images,
   startIndex,
   onClose,
+  t,
 }: {
   images: string[];
   startIndex: number;
   onClose: () => void;
+  t: ReturnType<typeof useT>;
 }) {
   const [current, setCurrent] = useState(startIndex);
   const prev = useCallback(() => setCurrent((i) => (i - 1 + images.length) % images.length), [images.length]);
@@ -46,7 +49,7 @@ function Lightbox({
         className="absolute top-5 right-5 z-10 flex items-center gap-2 text-white/50 hover:text-white transition-colors"
       >
         <X size={18} strokeWidth={1.5} />
-        <span className="text-[10px] tracking-[0.2em] uppercase font-light">Close</span>
+        <span className="text-[10px] tracking-[0.2em] uppercase font-light">{t.detail.close}</span>
       </button>
       <div className="absolute top-5 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.25em] uppercase text-white/35 font-light">
         {current + 1} / {images.length}
@@ -64,7 +67,7 @@ function Lightbox({
         <img
           key={current}
           src={images[current]}
-          alt={`Photo ${current + 1}`}
+          alt={`${t.detail.photos} ${current + 1}`}
           className="max-w-full max-h-[88vh] object-contain"
           style={{ animation: "fadeInScale 0.2s ease" }}
         />
@@ -94,7 +97,15 @@ function Lightbox({
 }
 
 /* ── Gallery Grid ──────────────────────────────────── */
-function GalleryGrid({ images, onOpen }: { images: string[]; onOpen: (i: number) => void }) {
+function GalleryGrid({
+  images,
+  onOpen,
+  t,
+}: {
+  images: string[];
+  onOpen: (i: number) => void;
+  t: ReturnType<typeof useT>;
+}) {
   if (images.length === 0) return null;
 
   return (
@@ -117,7 +128,7 @@ function GalleryGrid({ images, onOpen }: { images: string[]; onOpen: (i: number)
             onClick={(e) => { e.stopPropagation(); onOpen(0); }}
           >
             <Grid3X3 size={11} />
-            {images.length} photos
+            {images.length} {t.detail.photos}
           </button>
         )}
       </div>
@@ -141,13 +152,12 @@ function GalleryGrid({ images, onOpen }: { images: string[]; onOpen: (i: number)
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* All photos button — appears on hover */}
           <button
             className="absolute bottom-5 left-5 flex items-center gap-2 px-5 py-2.5 text-[10px] tracking-[0.18em] uppercase font-medium bg-white/90 backdrop-blur-sm text-[var(--color-charcoal)] opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300 hover:bg-white"
             onClick={(e) => { e.stopPropagation(); onOpen(0); }}
           >
             <Grid3X3 size={11} />
-            All {images.length} photos
+            {t.detail.allPhotos} {images.length} {t.detail.photos}
           </button>
         </div>
 
@@ -187,7 +197,7 @@ function GalleryGrid({ images, onOpen }: { images: string[]; onOpen: (i: number)
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/42 backdrop-blur-[2px]">
                       <span className="font-serif text-3xl text-white leading-none">+{remaining}</span>
                       <span className="text-[9px] tracking-[0.28em] uppercase text-white/65 font-medium mt-2">
-                        more photos
+                        {t.detail.morePhotos}
                       </span>
                     </div>
                   )}
@@ -207,6 +217,7 @@ export default function PropertyDetail() {
   const [, navigate] = useLocation();
   const property = properties.find((p) => p.id === id);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const t = useT();
 
   function handleEnquire(checkin: string, checkout: string) {
     navigate(`/contact?checkin=${checkin}&checkout=${checkout}&property=${id ?? ""}`);
@@ -216,9 +227,9 @@ export default function PropertyDetail() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="font-serif text-3xl text-[var(--color-charcoal)] mb-3">Property not found</p>
+          <p className="font-serif text-3xl text-[var(--color-charcoal)] mb-3">{t.detail.notFound}</p>
           <Link href="/properties" className="text-sm text-[var(--color-charcoal-muted)] hover:text-[var(--color-charcoal)] underline font-light">
-            Back to all properties
+            {t.detail.backToAll}
           </Link>
         </div>
       </div>
@@ -229,7 +240,7 @@ export default function PropertyDetail() {
     <>
       {/* ── Gallery ─────────────────────────────────── */}
       <section className="pt-[72px]">
-        <GalleryGrid images={property.images} onOpen={setLightboxIndex} />
+        <GalleryGrid images={property.images} onOpen={setLightboxIndex} t={t} />
       </section>
 
       {/* ── Content ─────────────────────────────────── */}
@@ -241,7 +252,7 @@ export default function PropertyDetail() {
           className="inline-flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-[var(--color-charcoal-muted)] hover:text-[var(--color-charcoal)] transition-colors mb-10"
         >
           <ArrowLeft size={12} />
-          All Properties
+          {t.detail.allProperties}
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20">
@@ -260,15 +271,15 @@ export default function PropertyDetail() {
               <div className="flex flex-wrap items-center gap-7 pb-8 border-b border-[var(--color-sand-border)]">
                 <span className="flex items-center gap-2.5 text-sm text-[var(--color-charcoal-muted)] font-light">
                   <BedDouble size={15} strokeWidth={1.4} />
-                  {property.bedrooms} bedrooms
+                  {property.bedrooms} {t.detail.bedroomsLabel}
                 </span>
                 <span className="flex items-center gap-2.5 text-sm text-[var(--color-charcoal-muted)] font-light">
                   <Bath size={15} strokeWidth={1.4} />
-                  {property.bathrooms} bathrooms
+                  {property.bathrooms} {t.detail.bathroomsLabel}
                 </span>
                 <span className="flex items-center gap-2.5 text-sm text-[var(--color-charcoal-muted)] font-light">
                   <Users size={15} strokeWidth={1.4} />
-                  sleeps {property.guests}
+                  {t.detail.sleepsLabel} {property.guests}
                 </span>
               </div>
             </div>
@@ -289,7 +300,7 @@ export default function PropertyDetail() {
             {property.highlights.length > 0 && (
               <div>
                 <p className="text-[10px] tracking-[0.28em] uppercase font-medium text-[var(--color-charcoal)] mb-5">
-                  At a glance
+                  {t.detail.atAGlance}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {property.highlights.map((h) => (
@@ -311,7 +322,7 @@ export default function PropertyDetail() {
             {/* Amenities */}
             <div>
               <p className="text-[10px] tracking-[0.28em] uppercase font-medium text-[var(--color-charcoal)] mb-5">
-                What's included
+                {t.detail.whatsIncluded}
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-8">
                 {property.amenities.map((a) => (
@@ -331,7 +342,7 @@ export default function PropertyDetail() {
               <div>
                 <p className="text-[10px] tracking-[0.28em] uppercase font-medium text-[var(--color-charcoal)] mb-5 flex items-center gap-2">
                   <MapPin size={11} />
-                  Nearby
+                  {t.detail.nearby}
                 </p>
                 <div className="divide-y divide-[var(--color-sand-border)] border-t border-b border-[var(--color-sand-border)]">
                   {property.nearby.map((n) => (
@@ -348,7 +359,7 @@ export default function PropertyDetail() {
             {property.images.length > 5 && (
               <div>
                 <p className="text-[10px] tracking-[0.28em] uppercase font-medium text-[var(--color-charcoal)] mb-4">
-                  Inside the villa
+                  {t.detail.insideTheVilla}
                 </p>
                 <div className="grid grid-cols-3 gap-2">
                   {property.images.slice(5).map((src, i) => (
@@ -398,7 +409,7 @@ export default function PropertyDetail() {
                   href="/contact"
                   className="flex items-center justify-center gap-2 w-full py-3.5 text-[11px] tracking-[0.16em] uppercase font-medium border border-[var(--color-charcoal-muted)]/25 text-[var(--color-charcoal-muted)] hover:border-[var(--color-charcoal)]/50 hover:text-[var(--color-charcoal)] transition-all"
                 >
-                  Send Enquiry
+                  {t.detail.sendEnquiry}
                 </Link>
                 <a
                   href="https://wa.me/351912345678"
@@ -408,39 +419,39 @@ export default function PropertyDetail() {
                   style={{ color: "#15803d" }}
                 >
                   <Phone size={12} />
-                  WhatsApp Us
+                  {t.detail.whatsapp}
                 </a>
               </div>
 
               <p className="text-[10px] text-center font-light mb-8" style={{ color: "var(--color-charcoal-subtle)" }}>
-                We respond within 2 hours
+                {t.detail.respondTime}
               </p>
 
               {/* Quick stats */}
               <div className="border-t border-[var(--color-sand-border)] pt-6 space-y-3.5 mb-6">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-[var(--color-charcoal-muted)] font-light flex items-center gap-2">
-                    <BedDouble size={13} strokeWidth={1.4} /> Bedrooms
+                    <BedDouble size={13} strokeWidth={1.4} /> {t.detail.bedrooms}
                   </span>
                   <span className="text-xs font-medium text-[var(--color-charcoal)]">{property.bedrooms}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-[var(--color-charcoal-muted)] font-light flex items-center gap-2">
-                    <Bath size={13} strokeWidth={1.4} /> Bathrooms
+                    <Bath size={13} strokeWidth={1.4} /> {t.detail.bathrooms}
                   </span>
                   <span className="text-xs font-medium text-[var(--color-charcoal)]">{property.bathrooms}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-[var(--color-charcoal-muted)] font-light flex items-center gap-2">
-                    <Users size={13} strokeWidth={1.4} /> Guests
+                    <Users size={13} strokeWidth={1.4} /> {t.detail.guests}
                   </span>
-                  <span className="text-xs font-medium text-[var(--color-charcoal)]">Up to {property.guests}</span>
+                  <span className="text-xs font-medium text-[var(--color-charcoal)]">{t.detail.upTo} {property.guests}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-[var(--color-charcoal-muted)] font-light flex items-center gap-2">
-                    <Car size={13} strokeWidth={1.4} /> Parking
+                    <Car size={13} strokeWidth={1.4} /> {t.detail.parking}
                   </span>
-                  <span className="text-xs font-medium text-[var(--color-charcoal)]">Indoor</span>
+                  <span className="text-xs font-medium text-[var(--color-charcoal)]">{t.detail.parkingValue}</span>
                 </div>
               </div>
 
@@ -462,7 +473,7 @@ export default function PropertyDetail() {
                 className="w-full flex items-center justify-center gap-2 py-3 text-[10px] tracking-[0.18em] uppercase font-medium text-[var(--color-charcoal-muted)] hover:text-[var(--color-charcoal)] border border-[var(--color-sand-border)] hover:border-[var(--color-charcoal-muted)]/40 transition-all"
               >
                 <Grid3X3 size={11} />
-                View all {property.images.length} photos
+                {t.detail.viewAllPhotos} {property.images.length} {t.detail.photos}
               </button>
             </div>
           </div>
@@ -488,6 +499,7 @@ export default function PropertyDetail() {
           images={property.images}
           startIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
+          t={t}
         />
       )}
 
