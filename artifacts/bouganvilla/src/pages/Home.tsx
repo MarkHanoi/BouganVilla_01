@@ -99,23 +99,21 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover object-center"
           style={{ transform: "rotate(180deg)" }}
         />
-        {/* Top fade — solid #183448 for first 35%, then dissolves into image.
-            Matches the hero colour lock exactly — zero discontinuity. */}
+        {/* Top fade — tiny solid lock (~50px) then quick dissolve into image */}
         <div
           className="absolute top-0 left-0 right-0 pointer-events-none"
           style={{
-            height: "65%",
-            background: "linear-gradient(to bottom, #183448 0%, #183448 35%, transparent 100%)",
+            height: "30%",
+            background: "linear-gradient(to bottom, #183448 0%, #183448 12%, transparent 100%)",
             zIndex: 1,
           }}
         />
-        {/* Bottom fade — solid #f0e8d8 for first 35%, then dissolves into image.
-            Matches the page body background exactly — zero discontinuity. */}
+        {/* Bottom fade — tiny solid lock (~50px) then quick dissolve into image */}
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none"
           style={{
-            height: "65%",
-            background: "linear-gradient(to top, #f0e8d8 0%, #f0e8d8 35%, transparent 100%)",
+            height: "30%",
+            background: "linear-gradient(to top, #f0e8d8 0%, #f0e8d8 12%, transparent 100%)",
             zIndex: 1,
           }}
         />
