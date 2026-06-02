@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <>
       {/* ── Hero ───────────────────────────────────────── */}
-      <section className="grain-overlay hero-gradient relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="grain-overlay hero-gradient relative h-[78vh] min-h-[560px] flex items-center justify-center overflow-hidden">
         <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
           <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] leading-[1.05] text-white mb-6">
             {t.home.hero.line1}
