@@ -266,7 +266,7 @@ export default function Home() {
               <div
                 key={t_item.id}
                 className="p-8 lg:p-10 border border-[var(--color-sand-border)]"
-                style={{ backgroundColor: "rgba(45, 74, 62, 0.88)", backdropFilter: "blur(8px)" }}
+                style={{ backgroundColor: "rgba(32, 62, 78, 0.88)", backdropFilter: "blur(8px)" }}
               >
                 <div className="flex gap-0.5 mb-5">
                   {Array.from({ length: t_item.rating }).map((_, i) => (
