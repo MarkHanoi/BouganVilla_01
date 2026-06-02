@@ -16,11 +16,11 @@ export default function Home() {
     <>
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="grain-overlay hero-gradient relative h-[78vh] min-h-[560px] flex items-center justify-center overflow-hidden">
-        <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] leading-[1.05] font-extrabold tracking-tight text-white mb-6">
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] font-light tracking-tight text-white mb-5">
             {t.home.hero.line1}
             <br />
-            <span className="font-light" style={{ color: "var(--color-sand)" }}>
+            <span className="font-light text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase" style={{ color: "var(--color-sand)", display: "block", marginTop: "0.6em" }}>
               {t.home.hero.line2}
             </span>
           </h1>

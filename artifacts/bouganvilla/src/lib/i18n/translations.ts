@@ -192,8 +192,8 @@ const en: Translations = {
   home: {
     hero: {
       tagline: "Portuguese Coast",
-      line1: "Stay where the",
-      line2: "light is different.",
+      line1: "Where your villa meets their holidays",
+      line2: "South Bank Lisbon Rentals",
       sub: "Handpicked villas and apartments on the Portuguese coast.",
       cta: "Explore Our Properties",
     },
