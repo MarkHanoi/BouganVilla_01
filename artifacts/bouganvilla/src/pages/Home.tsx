@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, Star, Home as HomeIcon, Users } from "lucide-react";
 import { properties, testimonials } from "../data";
 import { useT } from "../lib/i18n/context";
+import OwnerWizard from "../components/OwnerWizard";
+
+type Persona = "guest" | "owner";
 
 export default function Home() {
   const t = useT();
+  const [persona, setPersona] = useState<Persona>("guest");
 
   const usps = [
     { icon: "✦", title: t.home.usps[0].title, body: t.home.usps[0].body },
@@ -12,30 +17,85 @@ export default function Home() {
     { icon: "◇", title: t.home.usps[2].title, body: t.home.usps[2].body },
   ];
 
+  const ownerUsps = [
+    { icon: "✦", title: "Hands-off management", body: "We handle everything — listings, guest comms, check-ins, cleaning. You collect." },
+    { icon: "◈", title: "Premium positioning", body: "Your property listed as a curated Bougan Villa — never lost in a sea of listings." },
+    { icon: "◇", title: "Transparent earnings", body: "Monthly reports, direct bank transfers, no surprises. Your property, your rules." },
+  ];
+
   return (
     <>
       {/* ── Hero ───────────────────────────────────────── */}
-      <section className="grain-overlay hero-gradient relative h-[78vh] min-h-[560px] flex items-center justify-center overflow-hidden">
-        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] font-light tracking-tight text-white mb-5">
-            {t.home.hero.line1}
-            <br />
-            <span className="font-light text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase" style={{ color: "var(--color-sand)", display: "block", marginTop: "0.6em" }}>
-              {t.home.hero.line2}
-            </span>
-          </h1>
+      <section className="grain-overlay hero-gradient relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden pb-0">
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto w-full">
 
+          {/* Persona switcher */}
+          <div className="inline-flex mb-10 border border-white/20 overflow-hidden">
+            <button
+              onClick={() => setPersona("guest")}
+              className={`flex items-center gap-2 px-7 py-3 text-[10px] tracking-[0.22em] uppercase font-medium transition-all duration-300 ${
+                persona === "guest"
+                  ? "bg-white text-[var(--color-charcoal)]"
+                  : "bg-transparent text-white/60 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              <Users size={11} />
+              For Guests
+            </button>
+            <button
+              onClick={() => setPersona("owner")}
+              className={`flex items-center gap-2 px-7 py-3 text-[10px] tracking-[0.22em] uppercase font-medium transition-all duration-300 ${
+                persona === "owner"
+                  ? "bg-white text-[var(--color-charcoal)]"
+                  : "bg-transparent text-white/60 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              <HomeIcon size={11} />
+              For Owners
+            </button>
+          </div>
 
-          <Link
-            href="/properties"
-            className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:gap-5 hover:bg-white/90"
-            style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
-          >
-            {t.home.hero.cta}
-            <ArrowRight size={14} />
-          </Link>
+          {/* Headline — switches by persona */}
+          {persona === "guest" ? (
+            <>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] font-light tracking-tight text-white mb-5">
+                {t.home.hero.line1}
+                <br />
+                <span
+                  className="font-light text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase"
+                  style={{ color: "var(--color-sand)", display: "block", marginTop: "0.6em" }}
+                >
+                  {t.home.hero.line2}
+                </span>
+              </h1>
+              <Link
+                href="/properties"
+                className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:gap-5 hover:bg-white/90"
+                style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
+              >
+                {t.home.hero.cta}
+                <ArrowRight size={14} />
+              </Link>
+            </>
+          ) : (
+            <>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] font-light tracking-tight text-white mb-3">
+                What's your villa worth?
+                <br />
+                <span
+                  className="font-light text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase"
+                  style={{ color: "var(--color-sand)", display: "block", marginTop: "0.6em" }}
+                >
+                  Get a free rental estimate
+                </span>
+              </h1>
+              <p className="text-sm text-white/50 font-light mb-8 tracking-wide">
+                4 quick steps — we'll email you a full breakdown
+              </p>
+              <OwnerWizard />
+            </>
+          )}
         </div>
-
 
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none"
@@ -66,252 +126,208 @@ export default function Home() {
         />
       </div>
 
-      {/* ── Manifesto strip ────────────────────────────── */}
-      <section className="py-10 border-b border-[var(--color-sand-border)]">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <p className="font-serif text-lg lg:text-xl text-[var(--color-charcoal)] leading-relaxed italic">
-            "{t.home.manifesto}"
-          </p>
-        </div>
-      </section>
+      {/* ══════════ GUEST MODE ══════════ */}
+      {persona === "guest" && (
+        <>
+          {/* ── Manifesto strip */}
+          <section className="py-10 border-b border-[var(--color-sand-border)]">
+            <div className="max-w-3xl mx-auto px-6 text-center">
+              <p className="font-serif text-lg lg:text-xl text-[var(--color-charcoal)] leading-relaxed italic">
+                "{t.home.manifesto}"
+              </p>
+            </div>
+          </section>
 
-      {/* ── Our Properties ──────────────────────────────── */}
-      <section className="py-16 lg:py-24 px-6 lg:px-12 max-w-7xl mx-auto">
-        <div className="text-center mb-14 lg:mb-20">
-          <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">
-            {t.home.collection.label}
-          </h2>
-        </div>
-
-        <div className="space-y-16 lg:space-y-20">
-          {properties.map((property, i) => (
-            <div
-              key={property.id}
-              className={`grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-[var(--color-sand-border)] ${i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""}`}
-              style={{ backdropFilter: "blur(2px)" }}
-            >
-              <Link
-                href={`/properties/${property.id}`}
-                className="relative aspect-[4/3] lg:aspect-auto overflow-hidden group block"
-              >
-                <img
-                  src={property.image}
-                  alt={`${property.name} — ${property.area}`}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+          {/* ── Our Collection */}
+          <section className="py-16 lg:py-24 px-6 lg:px-12 max-w-7xl mx-auto">
+            <div className="text-center mb-14 lg:mb-20">
+              <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">
+                {t.home.collection.label}
+              </h2>
+            </div>
+            <div className="space-y-16 lg:space-y-20">
+              {properties.map((property, i) => (
                 <div
-                  className="absolute top-4 left-4 px-3 py-1.5 text-[10px] tracking-[0.2em] uppercase font-medium"
-                  style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
+                  key={property.id}
+                  className={`grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-[var(--color-sand-border)] ${i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""}`}
+                  style={{ backdropFilter: "blur(2px)" }}
                 >
-                  {property.type === "villa" ? t.home.collection.villa : t.home.collection.apartment}
+                  <Link href={`/properties/${property.id}`} className="relative aspect-[4/3] lg:aspect-auto overflow-hidden group block">
+                    <img src={property.image} alt={`${property.name} — ${property.area}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+                    <div className="absolute top-4 left-4 px-3 py-1.5 text-[10px] tracking-[0.2em] uppercase font-medium" style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}>
+                      {property.type === "villa" ? t.home.collection.villa : t.home.collection.apartment}
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="bg-white/90 backdrop-blur-sm text-[var(--color-charcoal)] text-[10px] tracking-[0.2em] uppercase font-medium px-5 py-2.5">{t.home.collection.viewProperty}</span>
+                    </div>
+                  </Link>
+                  <div className="flex flex-col justify-center px-8 lg:px-14 py-12 lg:py-16" style={{ backgroundColor: "rgba(253, 249, 244, 0.72)", backdropFilter: "blur(8px)" }}>
+                    <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-charcoal-subtle)" }}>{property.area} · {property.region}</p>
+                    <Link href={`/properties/${property.id}`} className="group/title">
+                      <h3 className="font-serif text-3xl lg:text-4xl text-[var(--color-charcoal)] mb-4 leading-tight group-hover/title:text-[var(--color-terracotta)] transition-colors duration-300 cursor-pointer">{property.name}</h3>
+                    </Link>
+                    <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light mb-6 max-w-sm">{property.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-8">
+                      {property.tags.map((tag) => (
+                        <span key={tag} className="px-3 py-1 text-[10px] tracking-widest uppercase font-medium border border-[var(--color-sand-border)] text-[var(--color-charcoal-muted)]">{tag}</span>
+                      ))}
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <a href={property.cta.href} target={property.cta.external ? "_blank" : undefined} rel={property.cta.external ? "noopener noreferrer" : undefined} className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium transition-all hover:gap-4" style={{ backgroundColor: "var(--color-deep-green)", color: "white" }}>
+                        {property.cta.label} <ArrowRight size={13} />
+                      </a>
+                      <Link href={`/properties/${property.id}`} className="inline-flex items-center justify-center px-7 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium border border-[var(--color-sand-border)] text-[var(--color-charcoal-muted)] hover:border-[var(--color-charcoal)] hover:text-[var(--color-charcoal)] transition-all">
+                        {t.home.collection.learnMore}
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="bg-white/90 backdrop-blur-sm text-[var(--color-charcoal)] text-[10px] tracking-[0.2em] uppercase font-medium px-5 py-2.5">
-                    {t.home.collection.viewProperty}
-                  </span>
-                </div>
-              </Link>
+              ))}
+            </div>
+          </section>
 
-              <div
-                className="flex flex-col justify-center px-8 lg:px-14 py-12 lg:py-16"
-                style={{ backgroundColor: "rgba(253, 249, 244, 0.72)", backdropFilter: "blur(8px)" }}
-              >
-                <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-charcoal-subtle)" }}>
-                  {property.area} · {property.region}
-                </p>
-                <Link href={`/properties/${property.id}`} className="group/title">
-                  <h3 className="font-serif text-3xl lg:text-4xl text-[var(--color-charcoal)] mb-4 leading-tight group-hover/title:text-[var(--color-terracotta)] transition-colors duration-300 cursor-pointer">
-                    {property.name}
-                  </h3>
-                </Link>
-                <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light mb-6 max-w-sm">
-                  {property.description}
-                </p>
+          {/* ── Why Bougan Villa */}
+          <section className="py-16 lg:py-24">
+            <div className="max-w-7xl mx-auto px-6 lg:px-12">
+              <div className="text-center mb-14">
+                <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>{t.home.promise.label}</p>
+                <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">{t.home.promise.heading}</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                {usps.map((usp) => (
+                  <div key={usp.title} className="text-center px-8 py-10 border border-[var(--color-sand-border)]" style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}>
+                    <div className="text-2xl mb-5 block" style={{ color: "var(--color-magenta)" }}>{usp.icon}</div>
+                    <h3 className="font-serif text-2xl text-[var(--color-charcoal)] mb-3">{usp.title}</h3>
+                    <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light">{usp.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
 
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {property.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 text-[10px] tracking-widest uppercase font-medium border border-[var(--color-sand-border)] text-[var(--color-charcoal-muted)]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <a
-                    href={property.cta.href}
-                    target={property.cta.external ? "_blank" : undefined}
-                    rel={property.cta.external ? "noopener noreferrer" : undefined}
-                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium transition-all hover:gap-4"
-                    style={{ backgroundColor: "var(--color-deep-green)", color: "white" }}
-                  >
-                    {property.cta.label}
-                    <ArrowRight size={13} />
-                  </a>
-                  <Link
-                    href={`/properties/${property.id}`}
-                    className="inline-flex items-center justify-center px-7 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium border border-[var(--color-sand-border)] text-[var(--color-charcoal-muted)] hover:border-[var(--color-charcoal)] hover:text-[var(--color-charcoal)] transition-all"
-                  >
-                    {t.home.collection.learnMore}
+          {/* ── About */}
+          <section className="py-16 lg:py-24">
+            <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              <div className="px-10 py-12 border border-[var(--color-sand-border)]" style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}>
+                <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-4" style={{ color: "var(--color-terracotta)" }}>{t.home.about.label}</p>
+                <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)] mb-6 leading-tight">
+                  {t.home.about.heading1}<br />
+                  <em className="font-light italic" style={{ color: "var(--color-ocean)" }}>{t.home.about.heading2}</em>
+                </h2>
+                <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light mb-6 max-w-md">{t.home.about.body1}</p>
+                <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light max-w-md">{t.home.about.body2}</p>
+                <div className="mt-8">
+                  <Link href="/about" className="inline-flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase font-medium transition-colors group" style={{ color: "var(--color-terracotta)" }}>
+                    {t.home.about.cta} <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Why Bougan Villa ────────────────────────────── */}
-      <section className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-14">
-            <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>
-              {t.home.promise.label}
-            </p>
-            <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">
-              {t.home.promise.heading}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-            {usps.map((usp) => (
-              <div
-                key={usp.title}
-                className="text-center px-8 py-10 border border-[var(--color-sand-border)]"
-                style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}
-              >
-                <div className="text-2xl mb-5 block" style={{ color: "var(--color-magenta)" }}>
-                  {usp.icon}
+              <div className="relative">
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img src="/photos/villa-bougainvillea/02_LivingRoom_CafeTable.avif" alt="Portuguese coast" className="w-full h-full object-cover" />
                 </div>
-                <h3 className="font-serif text-2xl text-[var(--color-charcoal)] mb-3">{usp.title}</h3>
-                <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light">{usp.body}</p>
+                <div className="absolute -bottom-4 -left-4 w-24 h-24 -z-10" style={{ backgroundColor: "var(--color-terracotta-light)" }} />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      {/* ── About ────────────────────────────────────────── */}
-      <section className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div
-            className="px-10 py-12 border border-[var(--color-sand-border)]"
-            style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}
-          >
-            <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-4" style={{ color: "var(--color-terracotta)" }}>
-              {t.home.about.label}
-            </p>
-            <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)] mb-6 leading-tight">
-              {t.home.about.heading1}
-              <br />
-              <em className="font-light italic" style={{ color: "var(--color-ocean)" }}>
-                {t.home.about.heading2}
-              </em>
-            </h2>
-            <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light mb-6 max-w-md">
-              {t.home.about.body1}
-            </p>
-            <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light max-w-md">
-              {t.home.about.body2}
-            </p>
-            <div className="mt-8">
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase font-medium transition-colors group"
-                style={{ color: "var(--color-terracotta)" }}
-              >
-                {t.home.about.cta}
-                <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+          {/* ── Testimonials */}
+          <section className="py-16 lg:py-24">
+            <div className="max-w-7xl mx-auto px-6 lg:px-12">
+              <div className="text-center mb-14">
+                <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>{t.home.testimonials.label}</p>
+                <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">{t.home.testimonials.heading}</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+                {testimonials.map((t_item) => (
+                  <div key={t_item.id} className="p-8 lg:p-10 border border-[var(--color-sand-border)]" style={{ backgroundColor: "rgba(32, 62, 78, 0.88)", backdropFilter: "blur(8px)" }}>
+                    <div className="flex gap-0.5 mb-5">
+                      {Array.from({ length: t_item.rating }).map((_, i) => <Star key={i} size={12} className="fill-[var(--color-sand)] text-[var(--color-sand)]" />)}
+                    </div>
+                    <p className="font-serif text-lg text-white/90 leading-relaxed italic mb-6">"{t_item.quote}"</p>
+                    <div className="border-t border-white/10 pt-5">
+                      <p className="text-sm font-medium text-white/80">{t_item.author}</p>
+                      <p className="text-xs text-white/40 font-light mt-0.5">{t_item.origin} · {t_item.property}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── Contact CTA */}
+          <section className="py-16 lg:py-24 px-6 text-center">
+            <div className="max-w-xl mx-auto px-10 py-14 border border-[var(--color-sand-border)]" style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}>
+              <div className="bv-divider mb-8 max-w-xs mx-auto"><div className="bv-divider-dot" /><div className="bv-divider-dot" /><div className="bv-divider-dot" /></div>
+              <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-4" style={{ color: "var(--color-terracotta)" }}>{t.home.cta.label}</p>
+              <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)] mb-5">{t.home.cta.heading}</h2>
+              <p className="text-sm text-[var(--color-charcoal-muted)] font-light leading-relaxed mb-10">{t.home.cta.body}</p>
+              <Link href="/contact" className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium text-white transition-all hover:gap-5" style={{ backgroundColor: "var(--color-deep-green)" }}>
+                {t.home.cta.button} <ArrowRight size={14} />
               </Link>
             </div>
-          </div>
+          </section>
+        </>
+      )}
 
-          <div className="relative">
-            <div className="aspect-[4/3] overflow-hidden">
-              <img
-                src="/photos/villa-bougainvillea/02_LivingRoom_CafeTable.avif"
-                alt="Portuguese coast"
-                className="w-full h-full object-cover"
-              />
+      {/* ══════════ OWNER MODE ══════════ */}
+      {persona === "owner" && (
+        <>
+          {/* ── How it works */}
+          <section className="py-16 lg:py-24 px-6 lg:px-12 max-w-7xl mx-auto">
+            <div className="text-center mb-14">
+              <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>The process</p>
+              <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">Simple from day one</h2>
             </div>
-            <div
-              className="absolute -bottom-4 -left-4 w-24 h-24 -z-10"
-              style={{ backgroundColor: "var(--color-terracotta-light)" }}
-            />
-          </div>
-        </div>
-      </section>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-[var(--color-sand-border)]">
+              {[
+                { num: "01", title: "Get your estimate", body: "Use the calculator above to see what your property could earn. We'll follow up with a personalised analysis." },
+                { num: "02", title: "We take care of everything", body: "Listings, photography, guest comms, check-ins, cleaning — fully managed so you don't have to think about it." },
+                { num: "03", title: "You earn, consistently", body: "Monthly transfers, transparent reports, and a dedicated contact whenever you need us." },
+              ].map((step, i) => (
+                <div key={step.num} className={`px-8 lg:px-12 py-10 lg:py-14 ${i < 2 ? "border-b md:border-b-0 md:border-r border-[var(--color-sand-border)]" : ""}`} style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}>
+                  <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-5" style={{ color: "var(--color-terracotta)" }}>{step.num}</p>
+                  <h3 className="font-serif text-2xl text-[var(--color-charcoal)] mb-3">{step.title}</h3>
+                  <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light">{step.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-      {/* ── Testimonials ─────────────────────────────────── */}
-      <section className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-14">
-            <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>
-              {t.home.testimonials.label}
-            </p>
-            <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">
-              {t.home.testimonials.heading}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
-            {testimonials.map((t_item) => (
-              <div
-                key={t_item.id}
-                className="p-8 lg:p-10 border border-[var(--color-sand-border)]"
-                style={{ backgroundColor: "rgba(32, 62, 78, 0.88)", backdropFilter: "blur(8px)" }}
-              >
-                <div className="flex gap-0.5 mb-5">
-                  {Array.from({ length: t_item.rating }).map((_, i) => (
-                    <Star key={i} size={12} className="fill-[var(--color-sand)] text-[var(--color-sand)]" />
-                  ))}
-                </div>
-                <p className="font-serif text-lg text-white/90 leading-relaxed italic mb-6">
-                  "{t_item.quote}"
-                </p>
-                <div className="border-t border-white/10 pt-5">
-                  <p className="text-sm font-medium text-white/80">{t_item.author}</p>
-                  <p className="text-xs text-white/40 font-light mt-0.5">
-                    {t_item.origin} · {t_item.property}
-                  </p>
-                </div>
+          {/* ── Owner USPs */}
+          <section className="py-16 lg:py-24">
+            <div className="max-w-7xl mx-auto px-6 lg:px-12">
+              <div className="text-center mb-14">
+                <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>Why Bougan Villa</p>
+                <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">Managed with care</h2>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                {ownerUsps.map((usp) => (
+                  <div key={usp.title} className="text-center px-8 py-10 border border-[var(--color-sand-border)]" style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}>
+                    <div className="text-2xl mb-5 block" style={{ color: "var(--color-magenta)" }}>{usp.icon}</div>
+                    <h3 className="font-serif text-2xl text-[var(--color-charcoal)] mb-3">{usp.title}</h3>
+                    <p className="text-sm text-[var(--color-charcoal-muted)] leading-relaxed font-light">{usp.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
 
-      {/* ── Contact CTA ──────────────────────────────────── */}
-      <section className="py-16 lg:py-24 px-6 text-center">
-        <div
-          className="max-w-xl mx-auto px-10 py-14 border border-[var(--color-sand-border)]"
-          style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}
-        >
-          <div className="bv-divider mb-8 max-w-xs mx-auto">
-            <div className="bv-divider-dot" />
-            <div className="bv-divider-dot" />
-            <div className="bv-divider-dot" />
-          </div>
-          <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-4" style={{ color: "var(--color-terracotta)" }}>
-            {t.home.cta.label}
-          </p>
-          <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)] mb-5">
-            {t.home.cta.heading}
-          </h2>
-          <p className="text-sm text-[var(--color-charcoal-muted)] font-light leading-relaxed mb-10">
-            {t.home.cta.body}
-          </p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium text-white transition-all hover:gap-5"
-            style={{ backgroundColor: "var(--color-deep-green)" }}
-          >
-            {t.home.cta.button}
-            <ArrowRight size={14} />
-          </Link>
-        </div>
-      </section>
+          {/* ── Owner CTA */}
+          <section className="py-16 lg:py-24 px-6 text-center">
+            <div className="max-w-xl mx-auto px-10 py-14 border border-[var(--color-sand-border)]" style={{ backgroundColor: "rgba(253, 249, 244, 0.65)", backdropFilter: "blur(8px)" }}>
+              <div className="bv-divider mb-8 max-w-xs mx-auto"><div className="bv-divider-dot" /><div className="bv-divider-dot" /><div className="bv-divider-dot" /></div>
+              <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-4" style={{ color: "var(--color-terracotta)" }}>Ready to list?</p>
+              <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)] mb-5">Let's talk about your property</h2>
+              <p className="text-sm text-[var(--color-charcoal-muted)] font-light leading-relaxed mb-10">Already done the calculator? Get in touch and we'll walk you through everything — no commitment, no pressure.</p>
+              <Link href="/contact" className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium text-white transition-all hover:gap-5" style={{ backgroundColor: "var(--color-deep-green)" }}>
+                Get in touch <ArrowRight size={14} />
+              </Link>
+            </div>
+          </section>
+        </>
+      )}
     </>
   );
 }

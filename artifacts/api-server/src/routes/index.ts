@@ -8,6 +8,7 @@ import applyRouter from "./apply";
 import adminRouter from "./admin";
 import sessionsRouter from "./sessions";
 import stripeRouter from "./stripe";
+import ownerEstimateRouter from "./owner-estimate";
 
 const router: IRouter = Router();
 
@@ -19,6 +20,7 @@ router.use(ogRouter);
 router.use(applyRouter);
 router.use(adminRouter);
 router.use(sessionsRouter);
+router.use(ownerEstimateRouter);
 // Stripe checkout + webhook — must come after express.json() global middleware
 // which saves req.rawBody for webhook signature verification.
 router.use(stripeRouter);
