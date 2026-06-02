@@ -51,7 +51,7 @@ A production-ready marketing website for Bougan Villa, a boutique vacation renta
 ```
 --color-sand:        #F5EFE0   warm background sections
 --color-terracotta:  #C96A3A   primary accent, CTAs
---color-deep-green:  #2D4A3E   footer, dark buttons
+--color-deep-green:  #183448   footer, dark buttons (matches hero navy)
 --color-cream:       #FAF7F2   page background
 --color-charcoal:    #2B2B2B   primary text
 --color-ocean:       #4A7FA5   secondary accent

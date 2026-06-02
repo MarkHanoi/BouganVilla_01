@@ -8,14 +8,14 @@
   /* Brand palette — section backgrounds are glass so the flow shows through */
   --color-sand:        rgba(245, 239, 224, 0.82);
   --color-terracotta:  #c96a3a;
-  --color-deep-green:  #2d4a3e;
+  --color-deep-green:  #183448;
   --color-cream:       rgba(250, 247, 242, 0.80);
   --color-charcoal:    #2b2b2b;
   --color-ocean:       #4a7fa5;
 
   /* Derived shades */
   --color-terracotta-light: rgba(240, 216, 204, 0.85);
-  --color-deep-green-light: #3d6455;
+  --color-deep-green-light: #1e4a6e;
   --color-charcoal-muted:   #6b6b6b;
   --color-charcoal-subtle:  #a8a8a8;
   --color-sand-border:      rgba(232, 223, 208, 0.70);
