@@ -40,8 +40,8 @@ export default function Properties() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
                   <div
-                    className="absolute top-5 left-5 px-4 py-1.5 text-[10px] tracking-[0.2em] uppercase font-medium text-white"
-                    style={{ backgroundColor: "var(--color-terracotta)" }}
+                    className="absolute top-5 left-5 px-4 py-1.5 text-[10px] tracking-[0.2em] uppercase font-medium"
+                    style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
                   >
                     {property.type === "villa" ? t.properties.villa : t.properties.apartment}
                   </div>

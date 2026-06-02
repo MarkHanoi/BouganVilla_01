@@ -111,7 +111,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
                 <div
                   className="absolute top-4 left-4 px-3 py-1.5 text-[10px] tracking-[0.2em] uppercase font-medium"
-                  style={{ backgroundColor: "var(--color-terracotta)", color: "white" }}
+                  style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
                 >
                   {property.type === "villa" ? t.home.collection.villa : t.home.collection.apartment}
                 </div>
