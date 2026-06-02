@@ -311,7 +311,7 @@ export default function Home() {
           <Link
             href="/contact"
             className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium text-white transition-all hover:gap-5"
-            style={{ backgroundColor: "var(--color-terracotta)" }}
+            style={{ backgroundColor: "var(--color-deep-green)" }}
           >
             {t.home.cta.button}
             <ArrowRight size={14} />
