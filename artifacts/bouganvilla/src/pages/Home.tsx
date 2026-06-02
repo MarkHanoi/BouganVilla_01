@@ -39,9 +39,6 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 z-10">
-          <div className="w-px h-10 bg-white/20" />
-        </div>
 
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none"
