@@ -88,9 +88,17 @@ export default function Home() {
            sand at bottom (blends into warm cream content).
            Gradient fades at both edges for a seamless join.
       ──────────────────────────────────────────────────── */}
+      {/* CSS mask fades the entire element (image + overlays) to transparent
+          at the bottom — body background shows through naturally, no colour
+          to match, no seam possible. Top overlay still locks to hero colour. */}
       <div
         className="relative overflow-hidden"
-        style={{ height: "340px", marginTop: "-1px" }}
+        style={{
+          height: "340px",
+          marginTop: "-1px",
+          maskImage: "linear-gradient(to bottom, black 0%, black 48%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 48%, transparent 100%)",
+        }}
         aria-hidden="true"
       >
         <img
@@ -99,23 +107,12 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover object-center"
           style={{ transform: "rotate(180deg)" }}
         />
-        {/* Top fade — pure smooth dissolve from dark hero into teal ocean */}
+        {/* Top fade — locks strip top to hero dark colour */}
         <div
           className="absolute top-0 left-0 right-0 pointer-events-none"
           style={{
             height: "45%",
             background: "linear-gradient(to bottom, #183448 0%, #183448 5%, transparent 100%)",
-            zIndex: 1,
-          }}
-        />
-        {/* Bottom fade — bridges sand (#D5B185) to page cream (#f0e8d8).
-            Using rgba sand as the transparent stop avoids CSS interpolating
-            through black, giving a clean warm-toned dissolve. */}
-        <div
-          className="absolute bottom-0 left-0 right-0 pointer-events-none"
-          style={{
-            height: "78%",
-            background: "linear-gradient(to top, #f0e8d8 0%, #f0e8d8 6%, rgba(213,177,133,0) 100%)",
             zIndex: 1,
           }}
         />
