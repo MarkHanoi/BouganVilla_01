@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link } from "wouter";
-import { ArrowRight, Star, Home as HomeIcon, Users } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useSearch } from "wouter";
+import { ArrowRight, Star } from "lucide-react";
 import { properties, testimonials } from "../data";
 import { useT } from "../lib/i18n/context";
 import OwnerWizard from "../components/OwnerWizard";
@@ -9,7 +9,15 @@ type Persona = "guest" | "owner";
 
 export default function Home() {
   const t = useT();
+  const search = useSearch();
   const [persona, setPersona] = useState<Persona>("guest");
+
+  useEffect(() => {
+    if (search.includes("persona=owner")) {
+      setPersona("owner");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [search]);
 
   const usps = [
     { icon: "✦", title: t.home.usps[0].title, body: t.home.usps[0].body },
@@ -26,75 +34,130 @@ export default function Home() {
   return (
     <>
       {/* ── Hero ───────────────────────────────────────── */}
-      <section className="grain-overlay hero-gradient relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden pb-0">
-        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto w-full">
+      <section className="grain-overlay hero-gradient relative flex flex-col items-center justify-center overflow-hidden pb-0" style={{ minHeight: "78vh" }}>
+        <div className="relative z-10 flex flex-col items-center px-6 max-w-5xl mx-auto w-full gap-8 pt-20 pb-14">
 
-          {/* Persona switcher */}
-          <div className="inline-flex mb-10 border border-white/20 overflow-hidden">
-            <button
-              onClick={() => setPersona("guest")}
-              className={`flex items-center gap-2 px-7 py-3 text-[10px] tracking-[0.22em] uppercase font-medium transition-all duration-300 ${
-                persona === "guest"
-                  ? "bg-white text-[var(--color-charcoal)]"
-                  : "bg-transparent text-white/60 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <Users size={11} />
-              For Guests
-            </button>
-            <button
-              onClick={() => setPersona("owner")}
-              className={`flex items-center gap-2 px-7 py-3 text-[10px] tracking-[0.22em] uppercase font-medium transition-all duration-300 ${
-                persona === "owner"
-                  ? "bg-white text-[var(--color-charcoal)]"
-                  : "bg-transparent text-white/60 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <HomeIcon size={11} />
-              For Owners
-            </button>
-          </div>
-
-          {/* Headline — switches by persona */}
-          {persona === "guest" ? (
-            <>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] font-light tracking-tight text-white mb-5">
+          {/* Headline */}
+          <div className="text-center">
+            {persona === "guest" ? (
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-[1.08] font-light tracking-tight text-white mb-3">
                 {t.home.hero.line1}
                 <br />
                 <span
-                  className="font-light text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase"
-                  style={{ color: "var(--color-sand)", display: "block", marginTop: "0.6em" }}
+                  className="font-light text-base sm:text-lg lg:text-xl tracking-[0.25em] uppercase"
+                  style={{ color: "var(--color-sand)", display: "block", marginTop: "0.5em" }}
                 >
                   {t.home.hero.line2}
                 </span>
               </h1>
-              <Link
-                href="/properties"
-                className="inline-flex items-center gap-3 px-10 py-4 text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:gap-5 hover:bg-white/90"
-                style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
-              >
-                {t.home.hero.cta}
-                <ArrowRight size={14} />
-              </Link>
-            </>
-          ) : (
-            <>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] font-light tracking-tight text-white mb-3">
+            ) : (
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-[1.08] font-light tracking-tight text-white mb-3">
                 What's your villa worth?
                 <br />
                 <span
-                  className="font-light text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase"
-                  style={{ color: "var(--color-sand)", display: "block", marginTop: "0.6em" }}
+                  className="font-light text-base sm:text-lg lg:text-xl tracking-[0.25em] uppercase"
+                  style={{ color: "var(--color-sand)", display: "block", marginTop: "0.5em" }}
                 >
                   Get a free rental estimate
                 </span>
               </h1>
-              <p className="text-sm text-white/50 font-light mb-8 tracking-wide">
-                4 quick steps — we'll email you a full breakdown
-              </p>
-              <OwnerWizard />
-            </>
-          )}
+            )}
+          </div>
+
+          {/* ── Kretz-style frosted glass panel ── */}
+          <div
+            className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
+            style={{
+              background: "rgba(255,255,255,0.18)",
+              backdropFilter: "blur(18px)",
+              WebkitBackdropFilter: "blur(18px)",
+              border: "1px solid rgba(255,255,255,0.28)",
+            }}
+          >
+            {/* Tabs */}
+            <div className="flex border-b border-white/20">
+              <button
+                onClick={() => setPersona("guest")}
+                className="flex-1 py-3.5 text-[10px] tracking-[0.22em] uppercase font-semibold transition-all duration-300 relative"
+                style={{
+                  color: persona === "guest" ? "var(--color-charcoal)" : "rgba(255,255,255,0.6)",
+                  background: persona === "guest" ? "rgba(255,255,255,0.88)" : "transparent",
+                }}
+              >
+                For Guests
+                {persona === "guest" && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: "var(--color-terracotta)" }} />
+                )}
+              </button>
+              <button
+                onClick={() => setPersona("owner")}
+                className="flex-1 py-3.5 text-[10px] tracking-[0.22em] uppercase font-semibold transition-all duration-300 relative"
+                style={{
+                  color: persona === "owner" ? "var(--color-charcoal)" : "rgba(255,255,255,0.6)",
+                  background: persona === "owner" ? "rgba(255,255,255,0.88)" : "transparent",
+                }}
+              >
+                For Owners
+                {persona === "owner" && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: "var(--color-terracotta)" }} />
+                )}
+              </button>
+            </div>
+
+            {/* Panel body */}
+            <div className="px-6 py-6">
+              {persona === "guest" ? (
+                <div className="flex flex-col gap-4">
+                  <p className="text-white/80 text-sm font-light leading-relaxed">
+                    Hand-picked villas and apartments in Portugal's most coveted locations — Lisbon, the Algarve, and beyond.
+                  </p>
+                  <div className="flex gap-2 flex-wrap">
+                    {["Lisbon", "Algarve", "Cascais", "Sintra"].map((loc) => (
+                      <span
+                        key={loc}
+                        className="px-3 py-1 text-[10px] tracking-[0.15em] uppercase rounded-full border border-white/30 text-white/70 font-medium"
+                      >
+                        {loc}
+                      </span>
+                    ))}
+                  </div>
+                  <Link
+                    href="/properties"
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 text-[11px] tracking-[0.18em] uppercase font-semibold transition-all duration-300 hover:gap-4 rounded-lg mt-1"
+                    style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
+                  >
+                    {t.home.hero.cta}
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <p className="text-white/80 text-sm font-light leading-relaxed">
+                    4 quick steps — we'll email you a personalised rental estimate and earnings breakdown.
+                  </p>
+                  <div className="flex gap-4 text-center">
+                    {[["€", "Revenue estimate"], ["48h", "Response time"], ["0%", "Hidden fees"]].map(([val, lbl]) => (
+                      <div key={lbl} className="flex-1">
+                        <p className="text-white font-semibold text-lg leading-none mb-1">{val}</p>
+                        <p className="text-white/50 text-[9px] tracking-[0.15em] uppercase">{lbl}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => {
+                      const el = document.getElementById("owner-wizard");
+                      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 text-[11px] tracking-[0.18em] uppercase font-semibold transition-all duration-300 hover:gap-4 rounded-lg mt-1"
+                    style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
+                  >
+                    Get your estimate
+                    <ArrowRight size={13} />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div
@@ -107,7 +170,7 @@ export default function Home() {
       <div
         className="relative overflow-hidden"
         style={{
-          height: "340px",
+          height: "280px",
           marginTop: "-1px",
           maskImage: "linear-gradient(to bottom, black 0%, black 48%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 48%, transparent 100%)",
@@ -274,6 +337,16 @@ export default function Home() {
       {/* ══════════ OWNER MODE ══════════ */}
       {persona === "owner" && (
         <>
+          {/* ── Owner wizard anchor */}
+          <div id="owner-wizard" className="py-16 lg:py-24 px-6 lg:px-12 max-w-3xl mx-auto">
+            <div className="text-center mb-10">
+              <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>Free estimate</p>
+              <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-charcoal)]">What could your property earn?</h2>
+              <p className="mt-4 text-sm text-[var(--color-charcoal-muted)] font-light">4 quick steps — we'll email you a full breakdown</p>
+            </div>
+            <OwnerWizard />
+          </div>
+
           {/* ── How it works */}
           <section className="py-16 lg:py-24 px-6 lg:px-12 max-w-7xl mx-auto">
             <div className="text-center mb-14">

@@ -43,7 +43,7 @@ export default function Navbar() {
   const navLinks = [
     { href: "/properties", label: t.nav.properties },
     { href: "/areas", label: t.nav.destinations },
-    { href: "/owners", label: t.nav.forOwners },
+    { href: "/?persona=owner", label: t.nav.forOwners },
     { href: "/about", label: t.nav.about },
     { href: "/contact", label: t.nav.contact },
   ];
