@@ -34,112 +34,110 @@ export default function Home() {
   return (
     <>
       {/* ── Hero ───────────────────────────────────────── */}
-      <section className="grain-overlay hero-gradient relative flex flex-col items-center justify-center overflow-hidden pb-0" style={{ minHeight: "78vh" }}>
-        <div className="relative z-10 flex flex-col items-center px-6 max-w-5xl mx-auto w-full gap-8 pt-20 pb-14">
+      <section
+        className="grain-overlay hero-gradient relative flex flex-col items-center justify-center overflow-hidden pb-0"
+        style={{ minHeight: "62vh" }}
+      >
+        <div className="relative z-10 flex flex-col items-center px-6 max-w-2xl mx-auto w-full gap-7 pt-24 pb-12">
 
           {/* Headline */}
           <div className="text-center">
             {persona === "guest" ? (
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-[1.08] font-light tracking-tight text-white mb-3">
-                {t.home.hero.line1}
-                <br />
-                <span
-                  className="font-light text-base sm:text-lg lg:text-xl tracking-[0.25em] uppercase"
-                  style={{ color: "var(--color-sand)", display: "block", marginTop: "0.5em" }}
-                >
+              <>
+                <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light leading-[1.15] text-white mb-2">
+                  {t.home.hero.line1}
+                </h1>
+                <p className="text-[10px] tracking-[0.3em] uppercase font-light mt-3" style={{ color: "rgba(245,239,224,0.55)" }}>
                   {t.home.hero.line2}
-                </span>
-              </h1>
+                </p>
+              </>
             ) : (
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-[1.08] font-light tracking-tight text-white mb-3">
-                What's your villa worth?
-                <br />
-                <span
-                  className="font-light text-base sm:text-lg lg:text-xl tracking-[0.25em] uppercase"
-                  style={{ color: "var(--color-sand)", display: "block", marginTop: "0.5em" }}
-                >
-                  Get a free rental estimate
-                </span>
-              </h1>
+              <>
+                <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light leading-[1.15] text-white mb-2">
+                  What's your villa worth?
+                </h1>
+                <p className="text-[10px] tracking-[0.3em] uppercase font-light mt-3" style={{ color: "rgba(245,239,224,0.55)" }}>
+                  Free rental estimate
+                </p>
+              </>
             )}
           </div>
 
-          {/* ── Kretz-style frosted glass panel ── */}
+          {/* ── Frosted glass panel ── */}
           <div
-            className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
+            className="w-full overflow-hidden"
             style={{
-              background: "rgba(255,255,255,0.18)",
-              backdropFilter: "blur(18px)",
-              WebkitBackdropFilter: "blur(18px)",
-              border: "1px solid rgba(255,255,255,0.28)",
+              background: "rgba(255,255,255,0.12)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              border: "1px solid rgba(255,255,255,0.18)",
+              borderRadius: "14px",
             }}
           >
             {/* Tabs */}
-            <div className="flex border-b border-white/20">
+            <div className="flex">
               <button
                 onClick={() => setPersona("guest")}
-                className="flex-1 py-3.5 text-[10px] tracking-[0.22em] uppercase font-semibold transition-all duration-300 relative"
+                className="flex-1 py-3 text-[9px] tracking-[0.28em] uppercase font-medium transition-all duration-300 relative"
                 style={{
-                  color: persona === "guest" ? "var(--color-charcoal)" : "rgba(255,255,255,0.6)",
-                  background: persona === "guest" ? "rgba(255,255,255,0.88)" : "transparent",
+                  color: persona === "guest" ? "var(--color-charcoal)" : "rgba(255,255,255,0.45)",
+                  background: persona === "guest" ? "rgba(255,255,255,0.92)" : "transparent",
+                  borderRadius: persona === "guest" ? "12px 0 0 0" : "0",
                 }}
               >
                 For Guests
-                {persona === "guest" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: "var(--color-terracotta)" }} />
-                )}
               </button>
+              <div style={{ width: "1px", background: "rgba(255,255,255,0.15)" }} />
               <button
                 onClick={() => setPersona("owner")}
-                className="flex-1 py-3.5 text-[10px] tracking-[0.22em] uppercase font-semibold transition-all duration-300 relative"
+                className="flex-1 py-3 text-[9px] tracking-[0.28em] uppercase font-medium transition-all duration-300 relative"
                 style={{
-                  color: persona === "owner" ? "var(--color-charcoal)" : "rgba(255,255,255,0.6)",
-                  background: persona === "owner" ? "rgba(255,255,255,0.88)" : "transparent",
+                  color: persona === "owner" ? "var(--color-charcoal)" : "rgba(255,255,255,0.45)",
+                  background: persona === "owner" ? "rgba(255,255,255,0.92)" : "transparent",
+                  borderRadius: persona === "owner" ? "0 12px 0 0" : "0",
                 }}
               >
                 For Owners
-                {persona === "owner" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: "var(--color-terracotta)" }} />
-                )}
               </button>
             </div>
 
+            {/* Divider */}
+            <div style={{ height: "1px", background: "rgba(255,255,255,0.12)" }} />
+
             {/* Panel body */}
-            <div className="px-6 py-6">
+            <div className="px-6 py-5">
               {persona === "guest" ? (
                 <div className="flex flex-col gap-4">
-                  <p className="text-white/80 text-sm font-light leading-relaxed">
-                    Hand-picked villas and apartments in Portugal's most coveted locations — Lisbon, the Algarve, and beyond.
+                  <p className="text-white/65 text-[13px] font-light leading-relaxed">
+                    Hand-picked properties on Portugal's most coveted coasts — Lisbon, Setúbal, Silver Coast.
                   </p>
-                  <div className="flex gap-2 flex-wrap">
-                    {["Lisbon", "Algarve", "Cascais", "Sintra"].map((loc) => (
-                      <span
-                        key={loc}
-                        className="px-3 py-1 text-[10px] tracking-[0.15em] uppercase rounded-full border border-white/30 text-white/70 font-medium"
-                      >
-                        {loc}
+                  <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
+                    {["Lisbon", "Setúbal", "Silver Coast", "Cascais"].map((loc, i) => (
+                      <span key={loc} className="flex items-center gap-2">
+                        {i > 0 && <span className="w-[3px] h-[3px] rounded-full bg-white/20 inline-block" />}
+                        <span className="text-[10px] tracking-[0.18em] uppercase text-white/45 font-light">{loc}</span>
                       </span>
                     ))}
                   </div>
                   <Link
                     href="/properties"
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 text-[11px] tracking-[0.18em] uppercase font-semibold transition-all duration-300 hover:gap-4 rounded-lg mt-1"
+                    className="inline-flex items-center justify-center gap-2.5 w-full py-3 text-[10px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:gap-4"
                     style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
                   >
                     {t.home.hero.cta}
-                    <ArrowRight size={13} />
+                    <ArrowRight size={12} />
                   </Link>
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">
-                  <p className="text-white/80 text-sm font-light leading-relaxed">
-                    4 quick steps — we'll email you a personalised rental estimate and earnings breakdown.
+                  <p className="text-white/65 text-[13px] font-light leading-relaxed">
+                    Four steps, no commitment. We'll send you a personalised earnings breakdown within 48 hours.
                   </p>
-                  <div className="flex gap-4 text-center">
-                    {[["€", "Revenue estimate"], ["48h", "Response time"], ["0%", "Hidden fees"]].map(([val, lbl]) => (
-                      <div key={lbl} className="flex-1">
-                        <p className="text-white font-semibold text-lg leading-none mb-1">{val}</p>
-                        <p className="text-white/50 text-[9px] tracking-[0.15em] uppercase">{lbl}</p>
+                  <div className="flex gap-0 border border-white/10">
+                    {[["€", "Revenue"], ["48h", "Response"], ["0%", "Hidden fees"]].map(([val, lbl], i) => (
+                      <div key={lbl} className={`flex-1 py-3 text-center ${i < 2 ? "border-r border-white/10" : ""}`}>
+                        <p className="text-white/90 font-light text-base leading-none mb-1">{val}</p>
+                        <p className="text-white/35 text-[8px] tracking-[0.18em] uppercase">{lbl}</p>
                       </div>
                     ))}
                   </div>
@@ -148,11 +146,11 @@ export default function Home() {
                       const el = document.getElementById("owner-wizard");
                       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
                     }}
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 text-[11px] tracking-[0.18em] uppercase font-semibold transition-all duration-300 hover:gap-4 rounded-lg mt-1"
+                    className="inline-flex items-center justify-center gap-2.5 w-full py-3 text-[10px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:gap-4"
                     style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}
                   >
                     Get your estimate
-                    <ArrowRight size={13} />
+                    <ArrowRight size={12} />
                   </button>
                 </div>
               )}
