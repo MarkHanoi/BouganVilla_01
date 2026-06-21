@@ -178,7 +178,7 @@ async function dispatchWebhook(
   if (!webhookUrl) return;
 
   const payload = {
-    text: `[MIAW] Error spike: ${errorCount} errors in window (threshold: ${threshold})`,
+    text: `[Bougan Villa] Error spike: ${errorCount} errors in window (threshold: ${threshold})`,
     errors_in_window: errorCount,
     threshold,
     breakdown,
