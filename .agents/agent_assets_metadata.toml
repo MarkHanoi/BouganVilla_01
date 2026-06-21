@@ -6,3 +6,9 @@ id = "4bY8oJOjn1F74JOaeqx-i"
 uri = "file://attached_assets/BOUGANVILLA_Architecture_and_Product_Spec.md"
 type = "text"
 title = "Bougan Villa — Architecture & Product Spec"
+
+[[outputs]]
+id = "GqRrLchgG36-gnHzPuVlm"
+uri = "file://BOUGANVILLA_IMPLEMENTATION_PLAN.md"
+type = "text"
+title = "Bougan Villa — Architecture & Implementation Plan"
