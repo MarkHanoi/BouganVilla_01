@@ -1,18 +1,42 @@
 import { useState } from "react";
-import { Mail, Phone, Send, CheckCircle } from "lucide-react";
+import { Mail, Phone, Send, CheckCircle, AlertCircle, Loader } from "lucide-react";
 import { useT } from "../lib/i18n/context";
+
+const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
 export default function Contact() {
   const t = useT();
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
-    name: "", email: "", property: "",
+    name: "", email: "", phone: "", property: "",
     checkin: "", checkout: "", guests: "", message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error ?? `Server error ${res.status}`);
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const field =
@@ -57,6 +81,13 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                  <div className="flex items-start gap-3 px-4 py-3 border text-sm font-light" style={{ borderColor: "#f87171", backgroundColor: "#fff1f1", color: "#b91c1c" }}>
+                    <AlertCircle size={15} className="mt-0.5 shrink-0" strokeWidth={1.5} />
+                    <span>{error}</span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-[9px] tracking-[0.25em] uppercase font-medium mb-2" style={{ color: "var(--color-charcoal-muted)" }}>
@@ -160,11 +191,21 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="flex items-center gap-3 px-8 py-4 text-[11px] tracking-[0.2em] uppercase font-medium text-white transition-colors hover:opacity-90"
+                  disabled={loading}
+                  className="flex items-center gap-3 px-8 py-4 text-[11px] tracking-[0.2em] uppercase font-medium text-white transition-opacity disabled:opacity-60"
                   style={{ backgroundColor: "var(--color-terracotta)" }}
                 >
-                  {t.contact.form.submit}
-                  <Send size={13} />
+                  {loading ? (
+                    <>
+                      <Loader size={13} className="animate-spin" />
+                      Sending…
+                    </>
+                  ) : (
+                    <>
+                      {t.contact.form.submit}
+                      <Send size={13} />
+                    </>
+                  )}
                 </button>
 
                 <p className="text-xs font-light" style={{ color: "var(--color-charcoal-subtle)" }}>
