@@ -1,1 +1,3 @@
 - [i18n system](i18n-system.md) — 8-language dropdown in navbar, full page translations, localStorage persistence
+- [Admin auth pattern](admin-auth.md) — cookie session auth with ADMIN_EMAIL + ADMIN_PASSWORD (plaintext secret, Replit encrypts at rest); checkPassword() in lib/auth.ts handles both plain and hashed
+- [API routing convention](api-routing.md) — app.use("/api", router) in app.ts; sub-route files must NOT include /api prefix; health at /healthz (not /api/healthz)

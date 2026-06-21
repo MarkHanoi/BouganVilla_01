@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Phone, Send, CheckCircle, AlertCircle, Loader } from "lucide-react";
 import { useT } from "../lib/i18n/context";
 
@@ -13,6 +13,17 @@ export default function Contact() {
     name: "", email: "", phone: "", property: "",
     checkin: "", checkout: "", guests: "", message: "",
   });
+
+  // Pre-fill from URL search params (e.g. from AvailabilityCalendar "Enquire" button)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkin = params.get("checkin") ?? "";
+    const checkout = params.get("checkout") ?? "";
+    const property = params.get("property") ?? "";
+    if (checkin || checkout || property) {
+      setForm(f => ({ ...f, checkin, checkout, property }));
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
