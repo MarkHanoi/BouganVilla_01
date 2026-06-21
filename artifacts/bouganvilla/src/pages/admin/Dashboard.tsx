@@ -19,12 +19,17 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [enquiries, setEnquiries] = useState<any[]>([]);
 
+  const [upcoming, setUpcoming] = useState<any[]>([]);
+
   useEffect(() => {
     if (!ready) return;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const in30 = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
     Promise.all([
       fetch(`${API}/api/admin/enquiries`, { credentials: "include" }).then(r => r.json()),
       fetch(`${API}/api/admin/bookings`, { credentials: "include" }).then(r => r.json()),
-    ]).then(([enqs, bookings]) => {
+      fetch(`${API}/api/admin/bookings?from=${todayStr}&to=${in30}`, { credentials: "include" }).then(r => r.json()),
+    ]).then(([enqs, bookings, upcomingBk]) => {
       const now = new Date();
       const y = now.getFullYear(), m = now.getMonth();
       const monthStart = new Date(y, m, 1).toISOString().slice(0, 10);
@@ -45,6 +50,12 @@ export default function AdminDashboard() {
         revenueThisMonth: grossThisMonth,
       });
       setEnquiries((enqs as any[]).slice(0, 5));
+
+      const sorted = (Array.isArray(upcomingBk) ? upcomingBk : [])
+        .filter((b: any) => b.status !== "cancelled")
+        .sort((a: any, b: any) => a.check_in.localeCompare(b.check_in))
+        .slice(0, 6);
+      setUpcoming(sorted);
     }).catch(() => {});
   }, [ready]);
 
@@ -83,49 +94,94 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Recent Enquiries */}
-        <div className="bg-white border border-[var(--color-sand-border)]">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-sand-border)]">
-            <p className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "var(--color-charcoal)" }}>
-              Recent Enquiries
-            </p>
-            <Link href="/admin/enquiries">
-              <a className="text-[10px] tracking-[0.15em] uppercase font-medium" style={{ color: "var(--color-terracotta)" }}>
-                View all →
-              </a>
-            </Link>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Upcoming Bookings */}
+          <div className="bg-white border border-[var(--color-sand-border)]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-sand-border)]">
+              <p className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "var(--color-charcoal)" }}>
+                Upcoming — Next 30 Days
+              </p>
+              <Link href="/admin/calendar">
+                <a className="text-[10px] tracking-[0.15em] uppercase font-medium" style={{ color: "var(--color-terracotta)" }}>
+                  Calendar →
+                </a>
+              </Link>
+            </div>
+            {upcoming.length === 0 ? (
+              <div className="px-5 py-8 text-center text-sm font-light" style={{ color: "var(--color-charcoal-muted)" }}>No upcoming bookings</div>
+            ) : (
+              <div className="divide-y divide-[var(--color-sand-border)]">
+                {upcoming.map(b => {
+                  const nights = b.check_in && b.check_out
+                    ? Math.round((new Date(b.check_out).getTime() - new Date(b.check_in).getTime()) / 86400000) : 0;
+                  const channelColor: Record<string, string> = { airbnb: "#FF5A5F", booking_com: "#003580", direct: "#2e7d32", owner_block: "#888" };
+                  return (
+                    <div key={b.id} className="flex items-center gap-3 px-5 py-3.5">
+                      <div className="w-1 self-stretch rounded-full shrink-0" style={{ backgroundColor: channelColor[b.channel] ?? "#888" }} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate" style={{ color: "var(--color-charcoal)" }}>
+                          {b.guest_name ?? b.channel}
+                        </p>
+                        <p className="text-xs font-light" style={{ color: "var(--color-charcoal-muted)" }}>
+                          {b.check_in?.slice(0, 10)} · {nights}n · {b.property_id === "villa-emerald" ? "Villa Emerald" : "Apt SM"}
+                        </p>
+                      </div>
+                      {b.total_gross && (
+                        <span className="text-xs font-medium tabular-nums shrink-0" style={{ color: "var(--color-charcoal-muted)" }}>
+                          €{parseFloat(b.total_gross).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-          {enquiries.length === 0 ? (
-            <div className="px-5 py-8 text-center text-sm font-light" style={{ color: "var(--color-charcoal-muted)" }}>
-              No enquiries yet
+
+          {/* Recent Enquiries */}
+          <div className="bg-white border border-[var(--color-sand-border)]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-sand-border)]">
+              <p className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "var(--color-charcoal)" }}>
+                Recent Enquiries
+              </p>
+              <Link href="/admin/enquiries">
+                <a className="text-[10px] tracking-[0.15em] uppercase font-medium" style={{ color: "var(--color-terracotta)" }}>
+                  View all →
+                </a>
+              </Link>
             </div>
-          ) : (
-            <div className="divide-y divide-[var(--color-sand-border)]">
-              {enquiries.map((e) => (
-                <div key={e.id} className="flex items-center gap-4 px-5 py-4">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate" style={{ color: "var(--color-charcoal)" }}>{e.name}</p>
-                    <p className="text-xs font-light truncate" style={{ color: "var(--color-charcoal-muted)" }}>
-                      {e.email} · {e.property_id?.replace(/-/g, " ") ?? "—"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    {e.check_in && (
-                      <span className="text-xs font-light" style={{ color: "var(--color-charcoal-muted)" }}>
-                        {e.check_in?.slice(0, 10)} → {e.check_out?.slice(0, 10)}
+            {enquiries.length === 0 ? (
+              <div className="px-5 py-8 text-center text-sm font-light" style={{ color: "var(--color-charcoal-muted)" }}>
+                No enquiries yet
+              </div>
+            ) : (
+              <div className="divide-y divide-[var(--color-sand-border)]">
+                {enquiries.map((e) => (
+                  <div key={e.id} className="flex items-center gap-4 px-5 py-4">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate" style={{ color: "var(--color-charcoal)" }}>{e.name}</p>
+                      <p className="text-xs font-light truncate" style={{ color: "var(--color-charcoal-muted)" }}>
+                        {e.email} · {e.property_id?.replace(/-/g, " ") ?? "—"}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      {e.check_in && (
+                        <span className="text-xs font-light" style={{ color: "var(--color-charcoal-muted)" }}>
+                          {e.check_in?.slice(0, 10)} → {e.check_out?.slice(0, 10)}
+                        </span>
+                      )}
+                      <span
+                        className="text-[9px] tracking-[0.15em] uppercase font-medium px-2 py-1"
+                        style={{ color: statusColors[e.status] ?? "#888", backgroundColor: `${statusColors[e.status] ?? "#888"}18` }}
+                      >
+                        {e.status}
                       </span>
-                    )}
-                    <span
-                      className="text-[9px] tracking-[0.15em] uppercase font-medium px-2 py-1"
-                      style={{ color: statusColors[e.status] ?? "#888", backgroundColor: `${statusColors[e.status] ?? "#888"}18` }}
-                    >
-                      {e.status}
-                    </span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </AdminLayout>

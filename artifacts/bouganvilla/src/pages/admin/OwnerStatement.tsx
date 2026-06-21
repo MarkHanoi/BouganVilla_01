@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Printer, Download } from "lucide-react";
+import { Printer, Trash2 } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL ?? "";
 
@@ -56,6 +56,12 @@ export default function OwnerStatement({ propertyId, propertyName, year, month, 
   const agencyFee = netAfterChannels * agencyFeePercent / 100;
   const totalCosts = costs.reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
   const netToOwner = netAfterChannels - agencyFee - totalCosts;
+
+  const deleteCost = async (id: number) => {
+    if (!confirm("Delete this cost entry?")) return;
+    await fetch(`${API}/api/admin/costs/${id}`, { method: "DELETE", credentials: "include" });
+    setCosts(cs => cs.filter(c => c.id !== id));
+  };
 
   const handlePrint = () => window.print();
 
@@ -142,10 +148,19 @@ export default function OwnerStatement({ propertyId, propertyName, year, month, 
           <table className="w-full text-sm border-collapse">
             <tbody>
               {costs.map(c => (
-                <tr key={c.id} className="border-b border-[var(--color-sand-border)]/50">
+                <tr key={c.id} className="border-b border-[var(--color-sand-border)]/50 group">
                   <td className="py-2.5 capitalize" style={{ color: "var(--color-charcoal-muted)" }}>{c.category}</td>
                   <td className="py-2.5">{c.description}</td>
                   <td className="py-2.5 tabular-nums text-right" style={{ color: "#e53935" }}>−€{parseFloat(c.amount).toFixed(2)}</td>
+                  <td className="py-2.5 pl-3 print:hidden w-6">
+                    <button
+                      onClick={() => deleteCost(c.id)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Delete cost"
+                    >
+                      <Trash2 size={12} strokeWidth={1.5} style={{ color: "#e53935" }} />
+                    </button>
+                  </td>
                 </tr>
               ))}
               <tr className="border-b border-[var(--color-sand-border)]/50">

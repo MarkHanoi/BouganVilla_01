@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Mail, Phone, ExternalLink } from "lucide-react";
+import { Mail, Phone, ExternalLink, ArrowRight } from "lucide-react";
 import AdminLayout, { useAdminAuth } from "./layout/AdminLayout";
 
 const API = import.meta.env.VITE_API_URL ?? "";
@@ -37,6 +37,8 @@ export default function AdminEnquiries() {
 
   useEffect(() => { if (ready) load(); }, [ready]);
 
+  const [converting, setConverting] = useState(false);
+
   const updateStatus = async (id: number, status: Status) => {
     setUpdating(true);
     await fetch(`${API}/api/admin/enquiries/${id}`, {
@@ -48,6 +50,38 @@ export default function AdminEnquiries() {
     setUpdating(false);
     setSelected((s: any) => s ? { ...s, status } : s);
     load();
+  };
+
+  const convertToBooking = async (enq: any) => {
+    if (!enq.property_id || enq.property_id === "both" || enq.property_id === "not-sure") {
+      alert("Please set a specific property on this enquiry before converting.");
+      return;
+    }
+    setConverting(true);
+    try {
+      const res = await fetch(`${API}/api/admin/bookings`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          property_id: enq.property_id,
+          channel: "direct",
+          guest_name: enq.name,
+          guest_email: enq.email,
+          check_in: enq.check_in?.slice(0, 10) ?? null,
+          check_out: enq.check_out?.slice(0, 10) ?? null,
+          guests_count: enq.guests ?? null,
+          status: "confirmed",
+          notes: `Converted from enquiry #${enq.id}. Original message: ${enq.message ?? ""}`,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to create booking");
+      await updateStatus(enq.id, "converted");
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Error converting enquiry");
+    } finally {
+      setConverting(false);
+    }
   };
 
   if (!ready) return null;
@@ -186,6 +220,18 @@ export default function AdminEnquiries() {
                 <ExternalLink size={11} strokeWidth={1.5} />
                 Reply via Email
               </a>
+
+              {selected.status !== "converted" && selected.status !== "closed" && (
+                <button
+                  disabled={converting}
+                  onClick={() => convertToBooking(selected)}
+                  className="flex items-center justify-center gap-2 w-full py-3 text-[10px] tracking-[0.15em] uppercase font-medium border disabled:opacity-50 transition-colors"
+                  style={{ borderColor: "#2e7d32", color: "#2e7d32", backgroundColor: "#2e7d3210" }}
+                >
+                  <ArrowRight size={11} strokeWidth={1.5} />
+                  {converting ? "Converting…" : "Convert to Booking"}
+                </button>
+              )}
             </div>
           )}
         </div>

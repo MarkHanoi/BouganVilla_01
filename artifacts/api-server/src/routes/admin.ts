@@ -153,6 +153,12 @@ router.get("/admin/costs", requireAdmin, async (req, res) => {
   return res.json(rows);
 });
 
+router.delete("/admin/costs/:id", requireAdmin, async (req, res) => {
+  const pool = getPool();
+  await pool.query(`DELETE FROM costs WHERE id = $1`, [req.params.id]);
+  return res.json({ ok: true });
+});
+
 router.post("/admin/costs", requireAdmin, async (req, res) => {
   const pool = getPool();
   const { property_id, category, description, amount, date, booking_id } = req.body ?? {};
