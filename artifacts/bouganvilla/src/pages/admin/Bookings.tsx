@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Trash2, Check, X } from "lucide-react";
 import AdminLayout, { useAdminAuth } from "./layout/AdminLayout";
 
 const API = import.meta.env.VITE_API_URL ?? "";
@@ -27,17 +27,24 @@ const STATUS_COLORS: Record<string, string> = {
   checked_out: "#aaa",
 };
 
+const STATUSES = ["confirmed", "enquiry", "blocked", "cancelled", "checked_in", "checked_out"];
+
+const emptyBooking = {
+  property_id: "villa-emerald", channel: "direct", guest_name: "", guest_email: "",
+  check_in: "", check_out: "", guests_count: "", total_gross: "", channel_fee_pct: "", notes: "",
+};
+
 export default function AdminBookings() {
   const ready = useAdminAuth();
   const [bookings, setBookings] = useState<any[]>([]);
   const [propertyFilter, setPropertyFilter] = useState("all");
   const [showForm, setShowForm] = useState(false);
-  const [newBooking, setNewBooking] = useState({
-    property_id: "villa-emerald", channel: "direct", guest_name: "", guest_email: "",
-    check_in: "", check_out: "", guests_count: "", total_gross: "", channel_fee_pct: "", notes: "",
-  });
+  const [newBooking, setNewBooking] = useState({ ...emptyBooking });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editData, setEditData] = useState<Record<string, string>>({});
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const load = () => {
     fetch(`${API}/api/admin/bookings`, { credentials: "include" })
@@ -71,13 +78,50 @@ export default function AdminBookings() {
       });
       if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? "Failed"); }
       setShowForm(false);
-      setNewBooking({ property_id: "villa-emerald", channel: "direct", guest_name: "", guest_email: "", check_in: "", check_out: "", guests_count: "", total_gross: "", channel_fee_pct: "", notes: "" });
+      setNewBooking({ ...emptyBooking });
       load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");
     } finally {
       setSaving(false);
     }
+  };
+
+  const startEdit = (b: any) => {
+    setEditingId(b.id);
+    setEditData({
+      guest_name: b.guest_name ?? "",
+      guest_email: b.guest_email ?? "",
+      check_in: b.check_in?.slice(0, 10) ?? "",
+      check_out: b.check_out?.slice(0, 10) ?? "",
+      guests_count: b.guests_count ?? "",
+      total_gross: b.total_gross ?? "",
+      channel_fee_pct: b.channel_fee_pct ?? "",
+      status: b.status ?? "confirmed",
+      notes: b.notes ?? "",
+    });
+  };
+
+  const saveEdit = async () => {
+    if (editingId === null) return;
+    const net = editData.total_gross && editData.channel_fee_pct
+      ? (parseFloat(editData.total_gross) * (1 - parseFloat(editData.channel_fee_pct) / 100)).toFixed(2)
+      : editData.total_gross || null;
+    await fetch(`${API}/api/admin/bookings/${editingId}`, {
+      method: "PUT", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...editData, net_revenue: net }),
+    });
+    setEditingId(null);
+    load();
+  };
+
+  const deleteBooking = async (id: number) => {
+    if (!confirm("Permanently delete this booking? This cannot be undone.")) return;
+    setDeletingId(id);
+    await fetch(`${API}/api/admin/bookings/${id}`, { method: "DELETE", credentials: "include" });
+    setDeletingId(null);
+    load();
   };
 
   if (!ready) return null;
@@ -87,6 +131,7 @@ export default function AdminBookings() {
   const thStyle = "px-4 py-3 text-left text-[9px] tracking-[0.2em] uppercase font-medium border-b border-[var(--color-sand-border)]";
   const tdStyle = "px-4 py-3 text-sm font-light border-b border-[var(--color-sand-border)]";
   const inputCls = "w-full border border-[var(--color-sand-border)] px-3 py-2 text-sm font-light bg-white outline-none focus:border-[var(--color-terracotta)]";
+  const editInputCls = "w-full border border-[var(--color-sand-border)] px-2 py-1.5 text-xs font-light bg-[#fffdf9] outline-none focus:border-[var(--color-terracotta)]";
 
   return (
     <AdminLayout title="Bookings">
@@ -174,23 +219,85 @@ export default function AdminBookings() {
 
         {/* Table */}
         <div className="bg-white border border-[var(--color-sand-border)] overflow-x-auto">
-          <table className="w-full min-w-[800px]">
+          <table className="w-full min-w-[900px]">
             <thead style={{ backgroundColor: "var(--color-sand)" }}>
               <tr>
-                {["Property","Channel","Guest","Check-in","Check-out","Nights","Gross","Net","Status","Actions"].map(h => (
+                {["Property", "Channel", "Guest", "Check-in", "Check-out", "Nights", "Gross", "Fee %", "Net", "Status", ""].map(h => (
                   <th key={h} className={thStyle} style={{ color: "var(--color-charcoal-muted)" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={10} className="px-4 py-8 text-center text-sm font-light" style={{ color: "var(--color-charcoal-muted)" }}>No bookings yet</td></tr>
+                <tr><td colSpan={11} className="px-4 py-8 text-center text-sm font-light" style={{ color: "var(--color-charcoal-muted)" }}>No bookings yet</td></tr>
               ) : filtered.map(b => {
                 const nights = b.check_in && b.check_out
                   ? Math.round((new Date(b.check_out).getTime() - new Date(b.check_in).getTime()) / 86400000)
                   : "—";
+
+                if (editingId === b.id) {
+                  const editNet = editData.total_gross && editData.channel_fee_pct
+                    ? (parseFloat(editData.total_gross) * (1 - parseFloat(editData.channel_fee_pct) / 100)).toFixed(2)
+                    : editData.total_gross || "—";
+                  return (
+                    <tr key={b.id} style={{ backgroundColor: "#fffdf9" }}>
+                      <td className={tdStyle} style={{ color: "var(--color-charcoal-muted)" }}>
+                        {b.property_id === "villa-emerald" ? "Villa Emerald" : "Apt SM"}
+                      </td>
+                      <td className={tdStyle}>
+                        <span className="text-[9px] tracking-[0.1em] uppercase font-medium px-2 py-1"
+                          style={{ color: CHANNEL_COLORS[b.channel] ?? "#888", backgroundColor: `${CHANNEL_COLORS[b.channel] ?? "#888"}15` }}>
+                          {CHANNEL_LABELS[b.channel] ?? b.channel}
+                        </span>
+                      </td>
+                      <td className={tdStyle}>
+                        <div className="space-y-1">
+                          <input className={editInputCls} placeholder="Name" value={editData.guest_name} onChange={e => setEditData(d => ({ ...d, guest_name: e.target.value }))} />
+                          <input className={editInputCls} placeholder="Email" type="email" value={editData.guest_email} onChange={e => setEditData(d => ({ ...d, guest_email: e.target.value }))} />
+                        </div>
+                      </td>
+                      <td className={tdStyle}>
+                        <input className={editInputCls} type="date" value={editData.check_in} onChange={e => setEditData(d => ({ ...d, check_in: e.target.value }))} />
+                      </td>
+                      <td className={tdStyle}>
+                        <input className={editInputCls} type="date" value={editData.check_out} onChange={e => setEditData(d => ({ ...d, check_out: e.target.value }))} />
+                      </td>
+                      <td className={tdStyle} style={{ color: "var(--color-charcoal-muted)" }}>{nights}</td>
+                      <td className={tdStyle}>
+                        <input className={editInputCls} type="number" step="0.01" placeholder="0.00" value={editData.total_gross} onChange={e => setEditData(d => ({ ...d, total_gross: e.target.value }))} />
+                      </td>
+                      <td className={tdStyle}>
+                        <input className={editInputCls} type="number" step="0.1" placeholder="0" value={editData.channel_fee_pct} onChange={e => setEditData(d => ({ ...d, channel_fee_pct: e.target.value }))} />
+                      </td>
+                      <td className={tdStyle} style={{ color: "var(--color-charcoal-muted)" }}>
+                        {editNet !== "—" ? `€${parseFloat(editNet as string).toLocaleString()}` : "—"}
+                      </td>
+                      <td className={tdStyle}>
+                        <select
+                          value={editData.status}
+                          onChange={e => setEditData(d => ({ ...d, status: e.target.value }))}
+                          className="text-[9px] tracking-[0.1em] uppercase font-medium px-2 py-1 border outline-none cursor-pointer"
+                          style={{ color: STATUS_COLORS[editData.status] ?? "#888", borderColor: `${STATUS_COLORS[editData.status] ?? "#888"}40`, backgroundColor: `${STATUS_COLORS[editData.status] ?? "#888"}10` }}
+                        >
+                          {STATUSES.map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
+                        </select>
+                      </td>
+                      <td className={tdStyle}>
+                        <div className="flex items-center gap-2">
+                          <button onClick={saveEdit} title="Save" className="p-1 rounded hover:bg-green-50 transition-colors">
+                            <Check size={14} strokeWidth={1.5} style={{ color: "#2e7d32" }} />
+                          </button>
+                          <button onClick={() => setEditingId(null)} title="Cancel" className="p-1 rounded hover:bg-gray-100 transition-colors">
+                            <X size={14} strokeWidth={1.5} style={{ color: "var(--color-charcoal-muted)" }} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                }
+
                 return (
-                  <tr key={b.id} className="hover:bg-[var(--color-sand)]/30 transition-colors">
+                  <tr key={b.id} className="hover:bg-[var(--color-sand)]/30 transition-colors group">
                     <td className={tdStyle} style={{ color: "var(--color-charcoal)" }}>
                       {b.property_id === "villa-emerald" ? "Villa Emerald" : "Apt SM"}
                     </td>
@@ -200,11 +307,15 @@ export default function AdminBookings() {
                         {CHANNEL_LABELS[b.channel] ?? b.channel}
                       </span>
                     </td>
-                    <td className={tdStyle} style={{ color: "var(--color-charcoal)" }}>{b.guest_name ?? "—"}</td>
+                    <td className={tdStyle} style={{ color: "var(--color-charcoal)" }}>
+                      <p>{b.guest_name ?? "—"}</p>
+                      {b.guest_email && <p className="text-xs" style={{ color: "var(--color-charcoal-muted)" }}>{b.guest_email}</p>}
+                    </td>
                     <td className={tdStyle} style={{ color: "var(--color-charcoal-muted)" }}>{b.check_in?.slice(0, 10)}</td>
                     <td className={tdStyle} style={{ color: "var(--color-charcoal-muted)" }}>{b.check_out?.slice(0, 10)}</td>
                     <td className={tdStyle} style={{ color: "var(--color-charcoal-muted)" }}>{nights}</td>
                     <td className={tdStyle} style={{ color: "var(--color-charcoal)" }}>{b.total_gross ? `€${parseFloat(b.total_gross).toLocaleString()}` : "—"}</td>
+                    <td className={tdStyle} style={{ color: "var(--color-charcoal-muted)" }}>{b.channel_fee_pct ? `${b.channel_fee_pct}%` : "—"}</td>
                     <td className={tdStyle} style={{ color: "var(--color-charcoal)" }}>{b.net_revenue ? `€${parseFloat(b.net_revenue).toLocaleString()}` : "—"}</td>
                     <td className={tdStyle}>
                       <select
@@ -213,17 +324,28 @@ export default function AdminBookings() {
                         className="text-[9px] tracking-[0.1em] uppercase font-medium px-2 py-1 border outline-none cursor-pointer"
                         style={{ color: STATUS_COLORS[b.status] ?? "#888", borderColor: `${STATUS_COLORS[b.status] ?? "#888"}40`, backgroundColor: `${STATUS_COLORS[b.status] ?? "#888"}10` }}
                       >
-                        {["confirmed","enquiry","blocked","cancelled","checked_in","checked_out"].map(s => (
-                          <option key={s} value={s}>{s.replace("_", " ")}</option>
-                        ))}
+                        {STATUSES.map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
                       </select>
                     </td>
                     <td className={tdStyle}>
-                      {b.guest_email && (
-                        <a href={`mailto:${b.guest_email}`} className="text-[10px] tracking-[0.1em] uppercase font-medium" style={{ color: "var(--color-terracotta)" }}>
-                          Email
-                        </a>
-                      )}
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => startEdit(b)} title="Edit booking" className="p-1 rounded hover:bg-[var(--color-sand)] transition-colors">
+                          <Pencil size={13} strokeWidth={1.5} style={{ color: "var(--color-charcoal-muted)" }} />
+                        </button>
+                        <button
+                          onClick={() => deleteBooking(b.id)}
+                          disabled={deletingId === b.id}
+                          title="Delete booking"
+                          className="p-1 rounded hover:bg-red-50 transition-colors disabled:opacity-50"
+                        >
+                          <Trash2 size={13} strokeWidth={1.5} style={{ color: "#e53935" }} />
+                        </button>
+                        {b.guest_email && (
+                          <a href={`mailto:${b.guest_email}`} className="text-[10px] tracking-[0.1em] uppercase font-medium" style={{ color: "var(--color-terracotta)" }}>
+                            Email
+                          </a>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );

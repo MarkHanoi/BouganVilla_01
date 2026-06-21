@@ -140,6 +140,12 @@ router.put("/admin/bookings/:id", requireAdmin, async (req, res) => {
   return res.json(rows[0]);
 });
 
+router.delete("/admin/bookings/:id", requireAdmin, async (req, res) => {
+  const pool = getPool();
+  await pool.query(`DELETE FROM bookings WHERE id = $1`, [parseInt(req.params.id, 10)]);
+  return res.json({ ok: true });
+});
+
 // ── Costs ─────────────────────────────────────────────────────────────────────
 
 router.get("/admin/costs", requireAdmin, async (req, res) => {

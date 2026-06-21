@@ -41,12 +41,32 @@ export default function AdminDashboard() {
 
       const grossThisMonth = thisMonthBookings.reduce((s: number, b: any) => s + (parseFloat(b.total_gross) || 0), 0);
 
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+      const calcOccupancy = (propertyId: string) => {
+        const propBookings = (Array.isArray(bookings) ? bookings : []).filter(
+          (b: any) => b.property_id === propertyId && b.status !== "cancelled" && b.status !== "blocked"
+        );
+        const occupiedDays = new Set<string>();
+        propBookings.forEach((b: any) => {
+          const cin = new Date(b.check_in);
+          const cout = new Date(b.check_out);
+          const d = new Date(Math.max(cin.getTime(), new Date(y, m, 1).getTime()));
+          const end = new Date(Math.min(cout.getTime(), new Date(y, m + 1, 0).getTime()));
+          while (d < end) {
+            occupiedDays.add(d.toISOString().slice(0, 10));
+            d.setDate(d.getDate() + 1);
+          }
+        });
+        return Math.round((occupiedDays.size / daysInMonth) * 100);
+      };
+
       setStats({
         enquiries: enqs.length ?? 0,
         newEnquiries: (enqs as any[]).filter((e: any) => e.status === "new").length,
         bookingsThisMonth: thisMonthBookings.length,
-        occupancyVilla: 0,
-        occupancyApt: 0,
+        occupancyVilla: calcOccupancy("villa-emerald"),
+        occupancyApt: calcOccupancy("apartamento-sao-martinho"),
         revenueThisMonth: grossThisMonth,
       });
       setEnquiries((enqs as any[]).slice(0, 5));
