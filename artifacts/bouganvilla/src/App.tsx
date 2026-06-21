@@ -9,6 +9,12 @@ import DestinationDetail from "./pages/DestinationDetail";
 import Owners from "./pages/Owners";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import AdminLogin from "./pages/admin/Login";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminEnquiries from "./pages/admin/Enquiries";
+import AdminBookings from "./pages/admin/Bookings";
+import AdminCalendar from "./pages/admin/Calendar";
+import AdminRevenue from "./pages/admin/Revenue";
 import { LanguageProvider } from "./lib/i18n/context";
 
 function WhatsAppButton() {
@@ -37,39 +43,62 @@ function WhatsAppButton() {
   );
 }
 
-export default function App() {
-  const [location] = useLocation();
-
+function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <LanguageProvider>
+    <>
       <div className="page-flow-bg" />
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        <main className="flex-1">
-          <div key={location} className="page-enter">
-            <Switch>
-              <Route path="/" component={Home} />
-              <Route path="/properties" component={Properties} />
-              <Route path="/properties/:id" component={PropertyDetail} />
-              <Route path="/areas" component={Areas} />
-              <Route path="/areas/:id" component={DestinationDetail} />
-              <Route path="/owners" component={Owners} />
-              <Route path="/about" component={About} />
-              <Route path="/contact" component={Contact} />
-              <Route>
-                <div className="flex items-center justify-center min-h-[60vh]">
-                  <div className="text-center">
-                    <p className="font-serif text-5xl text-[var(--color-charcoal)] mb-4">404</p>
-                    <p className="text-[var(--color-charcoal-muted)] font-light">Page not found</p>
-                  </div>
-                </div>
-              </Route>
-            </Switch>
-          </div>
-        </main>
+        <main className="flex-1">{children}</main>
         <Footer />
         <WhatsAppButton />
       </div>
+    </>
+  );
+}
+
+export default function App() {
+  const [location] = useLocation();
+  const isAdmin = location.startsWith("/admin");
+
+  if (isAdmin) {
+    return (
+      <Switch>
+        <Route path="/admin/login" component={AdminLogin} />
+        <Route path="/admin/enquiries" component={AdminEnquiries} />
+        <Route path="/admin/bookings" component={AdminBookings} />
+        <Route path="/admin/calendar" component={AdminCalendar} />
+        <Route path="/admin/revenue" component={AdminRevenue} />
+        <Route path="/admin" component={AdminDashboard} />
+        <Route path="/admin/:rest*" component={AdminDashboard} />
+      </Switch>
+    );
+  }
+
+  return (
+    <LanguageProvider>
+      <PublicLayout>
+        <div key={location} className="page-enter">
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/properties" component={Properties} />
+            <Route path="/properties/:id" component={PropertyDetail} />
+            <Route path="/areas" component={Areas} />
+            <Route path="/areas/:id" component={DestinationDetail} />
+            <Route path="/owners" component={Owners} />
+            <Route path="/about" component={About} />
+            <Route path="/contact" component={Contact} />
+            <Route>
+              <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-center">
+                  <p className="font-serif text-5xl text-[var(--color-charcoal)] mb-4">404</p>
+                  <p className="text-[var(--color-charcoal-muted)] font-light">Page not found</p>
+                </div>
+              </div>
+            </Route>
+          </Switch>
+        </div>
+      </PublicLayout>
     </LanguageProvider>
   );
 }

@@ -2,6 +2,7 @@ import express, { type Express, type ErrorRequestHandler } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import pinoHttp from "pino-http";
+import cookieParser from "cookie-parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { existsSync } from "node:fs";
@@ -57,6 +58,7 @@ app.use(
   }),
 );
 
+app.use(cookieParser());
 app.use(express.json({ limit: "64kb" }));
 app.use(express.urlencoded({ extended: true, limit: "64kb" }));
 

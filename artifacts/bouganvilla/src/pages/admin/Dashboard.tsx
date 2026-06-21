@@ -1,0 +1,133 @@
+import { useEffect, useState } from "react";
+import { Inbox, BookOpen, TrendingUp, Calendar } from "lucide-react";
+import AdminLayout, { useAdminAuth } from "./layout/AdminLayout";
+import { Link } from "wouter";
+
+const API = import.meta.env.VITE_API_URL ?? "";
+
+interface Stats {
+  enquiries: number;
+  newEnquiries: number;
+  bookingsThisMonth: number;
+  occupancyVilla: number;
+  occupancyApt: number;
+  revenueThisMonth: number;
+}
+
+export default function AdminDashboard() {
+  const ready = useAdminAuth();
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [enquiries, setEnquiries] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!ready) return;
+    Promise.all([
+      fetch(`${API}/api/admin/enquiries`, { credentials: "include" }).then(r => r.json()),
+      fetch(`${API}/api/admin/bookings`, { credentials: "include" }).then(r => r.json()),
+    ]).then(([enqs, bookings]) => {
+      const now = new Date();
+      const y = now.getFullYear(), m = now.getMonth();
+      const monthStart = new Date(y, m, 1).toISOString().slice(0, 10);
+      const monthEnd = new Date(y, m + 1, 0).toISOString().slice(0, 10);
+
+      const thisMonthBookings = Array.isArray(bookings)
+        ? bookings.filter((b: any) => b.check_in <= monthEnd && b.check_out >= monthStart && b.status !== "cancelled")
+        : [];
+
+      const grossThisMonth = thisMonthBookings.reduce((s: number, b: any) => s + (parseFloat(b.total_gross) || 0), 0);
+
+      setStats({
+        enquiries: enqs.length ?? 0,
+        newEnquiries: (enqs as any[]).filter((e: any) => e.status === "new").length,
+        bookingsThisMonth: thisMonthBookings.length,
+        occupancyVilla: 0,
+        occupancyApt: 0,
+        revenueThisMonth: grossThisMonth,
+      });
+      setEnquiries((enqs as any[]).slice(0, 5));
+    }).catch(() => {});
+  }, [ready]);
+
+  if (!ready) return null;
+
+  const kpis = [
+    { label: "New Enquiries", value: stats?.newEnquiries ?? "–", sub: `${stats?.enquiries ?? "–"} total`, icon: Inbox, href: "/admin/enquiries" },
+    { label: "Bookings This Month", value: stats?.bookingsThisMonth ?? "–", sub: "confirmed stays", icon: BookOpen, href: "/admin/bookings" },
+    { label: "Revenue This Month", value: stats ? `€${stats.revenueThisMonth.toLocaleString()}` : "–", sub: "gross across properties", icon: TrendingUp, href: "/admin/revenue" },
+    { label: "Calendar", value: "View", sub: "unified timeline", icon: Calendar, href: "/admin/calendar" },
+  ];
+
+  const statusColors: Record<string, string> = {
+    new: "#c96a3a",
+    replied: "#4a7fa5",
+    converted: "#2e7d32",
+    closed: "#888",
+  };
+
+  return (
+    <AdminLayout title="Dashboard">
+      <div className="space-y-6 max-w-5xl">
+        {/* KPIs */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {kpis.map(({ label, value, sub, icon: Icon, href }) => (
+            <Link key={label} href={href}>
+              <a className="block bg-white border border-[var(--color-sand-border)] p-5 hover:border-[var(--color-terracotta)] transition-colors group">
+                <div className="flex items-start justify-between mb-4">
+                  <Icon size={16} strokeWidth={1.5} style={{ color: "var(--color-terracotta)" }} />
+                </div>
+                <p className="text-2xl font-light mb-1" style={{ color: "var(--color-charcoal)" }}>{value}</p>
+                <p className="text-[10px] tracking-[0.15em] uppercase font-medium mb-0.5" style={{ color: "var(--color-charcoal)" }}>{label}</p>
+                <p className="text-[11px] font-light" style={{ color: "var(--color-charcoal-muted)" }}>{sub}</p>
+              </a>
+            </Link>
+          ))}
+        </div>
+
+        {/* Recent Enquiries */}
+        <div className="bg-white border border-[var(--color-sand-border)]">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-sand-border)]">
+            <p className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "var(--color-charcoal)" }}>
+              Recent Enquiries
+            </p>
+            <Link href="/admin/enquiries">
+              <a className="text-[10px] tracking-[0.15em] uppercase font-medium" style={{ color: "var(--color-terracotta)" }}>
+                View all →
+              </a>
+            </Link>
+          </div>
+          {enquiries.length === 0 ? (
+            <div className="px-5 py-8 text-center text-sm font-light" style={{ color: "var(--color-charcoal-muted)" }}>
+              No enquiries yet
+            </div>
+          ) : (
+            <div className="divide-y divide-[var(--color-sand-border)]">
+              {enquiries.map((e) => (
+                <div key={e.id} className="flex items-center gap-4 px-5 py-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate" style={{ color: "var(--color-charcoal)" }}>{e.name}</p>
+                    <p className="text-xs font-light truncate" style={{ color: "var(--color-charcoal-muted)" }}>
+                      {e.email} · {e.property_id?.replace(/-/g, " ") ?? "—"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    {e.check_in && (
+                      <span className="text-xs font-light" style={{ color: "var(--color-charcoal-muted)" }}>
+                        {e.check_in?.slice(0, 10)} → {e.check_out?.slice(0, 10)}
+                      </span>
+                    )}
+                    <span
+                      className="text-[9px] tracking-[0.15em] uppercase font-medium px-2 py-1"
+                      style={{ color: statusColors[e.status] ?? "#888", backgroundColor: `${statusColors[e.status] ?? "#888"}18` }}
+                    >
+                      {e.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </AdminLayout>
+  );
+}
