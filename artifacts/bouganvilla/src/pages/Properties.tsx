@@ -8,6 +8,14 @@ export default function Properties() {
   const t = useT();
   const { properties, loading } = useProperties();
   useDocumentTitle("Our Properties");
+  const [typeFilter, setTypeFilter] = useState<"all" | "villa" | "apartment">("all");
+  const [guestFilter, setGuestFilter] = useState<number>(0);
+
+  const filtered = properties.filter(p => {
+    if (typeFilter !== "all" && p.type !== typeFilter) return false;
+    if (guestFilter > 0 && (p.guests ?? 0) < guestFilter) return false;
+    return true;
+  });
 
   return (
     <>
@@ -23,6 +31,32 @@ export default function Properties() {
         <p className="mt-4 text-sm text-[var(--color-charcoal-muted)] font-light max-w-md leading-relaxed">
           {t.properties.sub}
         </p>
+
+        {/* Filter bar */}
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <span className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "var(--color-charcoal-muted)" }}>Filter:</span>
+          {(["all", "villa", "apartment"] as const).map(t2 => (
+            <button
+              key={t2}
+              onClick={() => setTypeFilter(t2)}
+              className={`px-4 py-1.5 text-[10px] tracking-[0.15em] uppercase font-medium border transition-colors ${typeFilter === t2 ? "text-white border-transparent" : "border-[var(--color-sand-border)] bg-white hover:border-[var(--color-charcoal-muted)]"}`}
+              style={typeFilter === t2 ? { backgroundColor: "var(--color-deep-green)" } : { color: "var(--color-charcoal-muted)" }}
+            >
+              {t2 === "all" ? "All types" : t2 === "villa" ? "Villas" : "Apartments"}
+            </button>
+          ))}
+          <span className="w-px h-4 bg-[var(--color-sand-border)]" />
+          {[0, 2, 4, 6].map(g => (
+            <button
+              key={g}
+              onClick={() => setGuestFilter(g)}
+              className={`px-4 py-1.5 text-[10px] tracking-[0.15em] uppercase font-medium border transition-colors ${guestFilter === g ? "text-white border-transparent" : "border-[var(--color-sand-border)] bg-white hover:border-[var(--color-charcoal-muted)]"}`}
+              style={guestFilter === g ? { backgroundColor: "var(--color-terracotta)" } : { color: "var(--color-charcoal-muted)" }}
+            >
+              {g === 0 ? "Any guests" : `${g}+ guests`}
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="px-6 lg:px-12 max-w-7xl mx-auto pb-24 pt-12">

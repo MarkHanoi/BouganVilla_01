@@ -247,7 +247,7 @@ export default function Contact() {
                   <Phone size={15} className="mt-0.5 shrink-0" strokeWidth={1.5} style={{ color: "var(--color-terracotta)" }} />
                   <div>
                     <p className="text-xs text-[var(--color-charcoal-muted)] font-light">WhatsApp / Phone</p>
-                    <a href="tel:+351912345678" className="text-sm transition-colors" style={{ color: "var(--color-charcoal)" }}>
+                    <a href="https://wa.me/351912345678" target="_blank" rel="noopener noreferrer" className="text-sm transition-colors hover:text-[var(--color-terracotta)]" style={{ color: "var(--color-charcoal)" }}>
                       +351 912 345 678
                     </a>
                   </div>

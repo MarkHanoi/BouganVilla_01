@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, Trash2, RefreshCw, Link } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { ChevronLeft, ChevronRight, Plus, Trash2, RefreshCw, Link, X } from "lucide-react";
 import AdminLayout, { useAdminAuth } from "./layout/AdminLayout";
 
 const API = import.meta.env.VITE_API_URL ?? "";
@@ -29,6 +29,28 @@ interface IcalFeed {
   error_count: number;
 }
 
+interface CreateBookingForm {
+  property_id: string;
+  guest_name: string;
+  guest_email: string;
+  check_in: string;
+  check_out: string;
+  channel: string;
+  total_price: string;
+  notes: string;
+}
+
+const BLANK_BOOKING: CreateBookingForm = {
+  property_id: "villa-emerald",
+  guest_name: "",
+  guest_email: "",
+  check_in: "",
+  check_out: "",
+  channel: "direct",
+  total_price: "",
+  notes: "",
+};
+
 export default function AdminCalendar() {
   const ready = useAdminAuth();
   const today = new Date();
@@ -41,6 +63,9 @@ export default function AdminCalendar() {
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
   const [newFeed, setNewFeed] = useState({ property_id: "villa-emerald", channel: "airbnb", ical_url: "" });
   const [addingFeed, setAddingFeed] = useState(false);
+  const [createForm, setCreateForm] = useState<CreateBookingForm | null>(null);
+  const [saving, setSaving] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const loadBookings = () => {
     const from = new Date(year, month, 1).toISOString().slice(0, 10);
