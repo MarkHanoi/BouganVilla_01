@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, Link } from "wouter";
-import { LayoutDashboard, Calendar, Inbox, BookOpen, TrendingUp, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Calendar, Inbox, BookOpen, TrendingUp, LogOut, Menu, Home } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL ?? "";
 
@@ -15,6 +15,7 @@ const navItems = [
   { href: "/admin/bookings", label: "Bookings", icon: BookOpen },
   { href: "/admin/calendar", label: "Calendar", icon: Calendar },
   { href: "/admin/revenue", label: "Revenue", icon: TrendingUp },
+  { href: "/admin/properties", label: "Properties", icon: Home },
 ];
 
 export function useAdminAuth() {

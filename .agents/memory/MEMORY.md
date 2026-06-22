@@ -1,3 +1,6 @@
 - [i18n system](i18n-system.md) — 8-language dropdown in navbar, full page translations, localStorage persistence
 - [Admin auth pattern](admin-auth.md) — cookie session auth with ADMIN_EMAIL + ADMIN_PASSWORD (plaintext secret, Replit encrypts at rest); checkPassword() in lib/auth.ts handles both plain and hashed
 - [API routing convention](api-routing.md) — app.use("/api", router) in app.ts; sub-route files must NOT include /api prefix; health at /healthz (not /api/healthz)
+- [useProperties hook](use-properties-hook.md) — API-driven hook at src/hooks/useProperties.ts with static fallback; transforms snake_case to camelCase; always include base_price_eur in SQL SELECT explicitly
+- [Admin properties management](admin-properties.md) — PATCH /api/admin/properties/:id endpoint; admin UI page at pages/admin/Properties.tsx; nav item added to AdminLayout
+- [HMR transient errors](hmr-errors.md) — rapid sequential edits can trigger "invalid hook call" or "X is not defined" errors in browser; restart the Start application workflow to clear stale module state

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, useSearch } from "wouter";
 import { ArrowRight, Star } from "lucide-react";
-import { properties, testimonials } from "../data";
+import { testimonials } from "../data";
 import { useT } from "../lib/i18n/context";
 import OwnerWizard from "../components/OwnerWizard";
+import { useProperties } from "../hooks/useProperties";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 type Persona = "guest" | "owner";
 
@@ -11,6 +13,8 @@ export default function Home() {
   const t = useT();
   const search = useSearch();
   const [persona, setPersona] = useState<Persona>("guest");
+  const { properties, loading: propsLoading } = useProperties();
+  useDocumentTitle();
 
   useEffect(() => {
     if (search.includes("persona=owner")) {
@@ -50,6 +54,18 @@ export default function Home() {
                 <p className="text-[10px] tracking-[0.3em] uppercase font-light mt-3" style={{ color: "rgba(245,239,224,0.55)" }}>
                   {t.home.hero.line2}
                 </p>
+                <div className="flex items-center justify-center gap-2 mt-4">
+                  <div className="flex items-center gap-0.5">
+                    {[1,2,3,4,5].map(i => (
+                      <svg key={i} width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style={{ color: "#C96A3A" }}>
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <span className="text-[10px] tracking-[0.15em] font-light" style={{ color: "rgba(245,239,224,0.60)" }}>
+                    5.0 · 47 five-star stays
+                  </span>
+                </div>
               </>
             ) : (
               <>
@@ -207,6 +223,21 @@ export default function Home() {
               </h2>
             </div>
             <div className="space-y-16 lg:space-y-20">
+              {propsLoading && properties.length === 0 && (
+                <>
+                  {[0, 1].map((i) => (
+                    <div key={i} className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-[var(--color-sand-border)] overflow-hidden animate-pulse">
+                      <div className="aspect-[4/3] lg:aspect-auto bg-[var(--color-sand)]" style={{ minHeight: 320 }} />
+                      <div className="p-10 flex flex-col justify-center gap-4">
+                        <div className="h-3 bg-[var(--color-sand-border)] rounded w-20" />
+                        <div className="h-9 bg-[var(--color-sand-border)] rounded w-40" />
+                        <div className="h-3 bg-[var(--color-sand-border)] rounded w-full max-w-xs" />
+                        <div className="h-3 bg-[var(--color-sand-border)] rounded w-3/4" />
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
               {properties.map((property, i) => (
                 <div
                   key={property.id}
@@ -214,7 +245,7 @@ export default function Home() {
                   style={{ backdropFilter: "blur(2px)" }}
                 >
                   <Link href={`/properties/${property.id}`} className="relative aspect-[4/3] lg:aspect-auto overflow-hidden group block">
-                    <img src={property.image} alt={`${property.name} — ${property.area}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img src={property.image} alt={`${property.name} — ${property.area}`} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
                     <div className="absolute top-4 left-4 px-3 py-1.5 text-[10px] tracking-[0.2em] uppercase font-medium" style={{ backgroundColor: "white", color: "var(--color-charcoal)" }}>
                       {property.type === "villa" ? t.home.collection.villa : t.home.collection.apartment}
@@ -286,7 +317,7 @@ export default function Home() {
               </div>
               <div className="relative">
                 <div className="aspect-[4/3] overflow-hidden">
-                  <img src="/photos/villa-bougainvillea/02_LivingRoom_CafeTable.avif" alt="Portuguese coast" className="w-full h-full object-cover" />
+                  <img src="/photos/villa-bougainvillea/02_LivingRoom_CafeTable.avif" alt="Portuguese coast" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -bottom-4 -left-4 w-24 h-24 -z-10" style={{ backgroundColor: "var(--color-terracotta-light)" }} />
               </div>

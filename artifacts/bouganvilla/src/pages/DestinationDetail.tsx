@@ -1,12 +1,15 @@
 import { useParams, Link } from "wouter";
-import { ArrowLeft, MapPin, ArrowRight, Mail } from "lucide-react";
+import { ArrowLeft, MapPin, ArrowRight, Mail, BedDouble, Users } from "lucide-react";
 import { destinations } from "../data/destinations";
+import { properties } from "../data";
 import { useT } from "../lib/i18n/context";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export default function DestinationDetail() {
   const { id } = useParams<{ id: string }>();
   const t = useT();
   const dest = destinations.find((d) => d.id === id);
+  useDocumentTitle(dest?.name ?? "Destinations");
 
   if (!dest) {
     return (
@@ -184,6 +187,57 @@ export default function DestinationDetail() {
                 ))}
               </ul>
             </div>
+
+            {/* Property in this area */}
+            {dest.propertyId && (() => {
+              const prop = properties.find(p => p.id === dest.propertyId);
+              if (!prop) return null;
+              return (
+                <div
+                  className="border border-[var(--color-sand-border)] overflow-hidden"
+                  style={{ backgroundColor: "var(--color-cream)" }}
+                >
+                  <div className="relative aspect-video overflow-hidden">
+                    <img
+                      src={prop.image}
+                      alt={prop.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <p className="absolute bottom-3 left-4 text-white text-xs tracking-[0.15em] uppercase font-medium">
+                      Stay here
+                    </p>
+                  </div>
+                  <div className="p-6">
+                    <p className="font-serif text-xl text-[var(--color-charcoal)] mb-1">{prop.name}</p>
+                    <p className="text-[10px] tracking-[0.2em] uppercase font-light text-[var(--color-charcoal-muted)] mb-3">{prop.area}</p>
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="flex items-center gap-1.5 text-xs text-[var(--color-charcoal-muted)] font-light">
+                        <BedDouble size={12} strokeWidth={1.5} /> {prop.bedrooms} bed
+                      </span>
+                      <span className="flex items-center gap-1.5 text-xs text-[var(--color-charcoal-muted)] font-light">
+                        <Users size={12} strokeWidth={1.5} /> Sleeps {prop.guests}
+                      </span>
+                      {prop.basePriceEur && (
+                        <span className="text-xs text-[var(--color-charcoal-muted)] font-light">
+                          From <strong className="text-[var(--color-charcoal)]">€{prop.basePriceEur}</strong>/night
+                        </span>
+                      )}
+                    </div>
+                    <Link
+                      href={`/properties/${prop.id}`}
+                      className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase font-medium group"
+                      style={{ color: "var(--color-terracotta)" }}
+                    >
+                      View property
+                      <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Contact */}
             <div

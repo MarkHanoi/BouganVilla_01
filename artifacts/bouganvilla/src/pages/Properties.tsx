@@ -1,10 +1,13 @@
 import { Link } from "wouter";
 import { ArrowRight, BedDouble, Bath, Users, ExternalLink } from "lucide-react";
-import { properties } from "../data";
 import { useT } from "../lib/i18n/context";
+import { useProperties } from "../hooks/useProperties";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export default function Properties() {
   const t = useT();
+  const { properties, loading } = useProperties();
+  useDocumentTitle("Our Properties");
 
   return (
     <>
@@ -24,6 +27,21 @@ export default function Properties() {
 
       <section className="px-6 lg:px-12 max-w-7xl mx-auto pb-24 pt-12">
         <div className="space-y-20 lg:space-y-28">
+          {loading && properties.length === 0 && (
+            <>
+              {[0, 1].map((i) => (
+                <div key={i} className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-[var(--color-sand-border)] overflow-hidden animate-pulse">
+                  <div className="aspect-[4/3] lg:aspect-auto bg-[var(--color-sand)]" style={{ minHeight: 300 }} />
+                  <div className="p-10 lg:p-14 flex flex-col justify-center gap-4">
+                    <div className="h-2.5 bg-[var(--color-sand-border)] rounded w-24" />
+                    <div className="h-8 bg-[var(--color-sand-border)] rounded w-48" />
+                    <div className="h-3 bg-[var(--color-sand-border)] rounded w-full max-w-xs" />
+                    <div className="h-3 bg-[var(--color-sand-border)] rounded w-2/3" />
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
           {properties.map((property, i) => (
             <article key={property.id}>
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 overflow-hidden">
@@ -81,6 +99,16 @@ export default function Properties() {
                     {property.description}
                   </p>
 
+                  {property.basePriceEur && (
+                    <p className="text-xs text-[var(--color-charcoal-muted)] font-light mb-4 -mt-4">
+                      From{" "}
+                      <span className="font-medium text-[var(--color-charcoal)]">
+                        €{property.basePriceEur}
+                      </span>
+                      /night
+                    </p>
+                  )}
+
                   <div className="flex flex-wrap gap-2 mb-10">
                     {property.tags.map((tag) => (
                       <span
@@ -115,6 +143,30 @@ export default function Properties() {
               </div>
             </article>
           ))}
+        </div>
+      </section>
+
+      {/* ── Coming soon teaser ───────────────────────── */}
+      <section className="px-6 lg:px-12 max-w-7xl mx-auto pb-24">
+        <div
+          className="border border-dashed border-[var(--color-sand-border)] flex flex-col items-center justify-center text-center py-16 px-8"
+          style={{ backgroundColor: "var(--color-cream)" }}
+        >
+          <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-3" style={{ color: "var(--color-terracotta)" }}>
+            Growing Collection
+          </p>
+          <p className="font-serif text-2xl lg:text-3xl text-[var(--color-charcoal)] mb-3">
+            More properties coming soon
+          </p>
+          <p className="text-sm text-[var(--color-charcoal-muted)] font-light max-w-sm leading-relaxed mb-6">
+            We're curating a handful of exceptional homes in Cascais, Comporta, and Costa da Caparica. Sign up to hear first.
+          </p>
+          <a
+            href="/contact"
+            className="inline-flex items-center gap-2 px-6 py-3 text-[11px] tracking-[0.18em] uppercase font-medium border border-[var(--color-charcoal)]/30 text-[var(--color-charcoal)] hover:border-[var(--color-charcoal)] transition-colors"
+          >
+            Get notified
+          </a>
         </div>
       </section>
 

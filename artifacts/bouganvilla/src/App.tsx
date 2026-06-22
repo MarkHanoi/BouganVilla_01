@@ -15,7 +15,9 @@ import AdminEnquiries from "./pages/admin/Enquiries";
 import AdminBookings from "./pages/admin/Bookings";
 import AdminCalendar from "./pages/admin/Calendar";
 import AdminRevenue from "./pages/admin/Revenue";
+import AdminProperties from "./pages/admin/Properties";
 import { LanguageProvider } from "./lib/i18n/context";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function WhatsAppButton() {
   return (
@@ -69,6 +71,7 @@ export default function App() {
         <Route path="/admin/bookings" component={AdminBookings} />
         <Route path="/admin/calendar" component={AdminCalendar} />
         <Route path="/admin/revenue" component={AdminRevenue} />
+        <Route path="/admin/properties" component={AdminProperties} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/admin/:rest*" component={AdminDashboard} />
       </Switch>
@@ -77,28 +80,38 @@ export default function App() {
 
   return (
     <LanguageProvider>
-      <PublicLayout>
-        <div key={location} className="page-enter">
-          <Switch>
-            <Route path="/" component={Home} />
-            <Route path="/properties" component={Properties} />
-            <Route path="/properties/:id" component={PropertyDetail} />
-            <Route path="/areas" component={Areas} />
-            <Route path="/areas/:id" component={DestinationDetail} />
-            <Route path="/owners" component={Owners} />
-            <Route path="/about" component={About} />
-            <Route path="/contact" component={Contact} />
-            <Route>
-              <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="text-center">
-                  <p className="font-serif text-5xl text-[var(--color-charcoal)] mb-4">404</p>
-                  <p className="text-[var(--color-charcoal-muted)] font-light">Page not found</p>
+      <ErrorBoundary>
+        <PublicLayout>
+          <div key={location} className="page-enter">
+            <Switch>
+              <Route path="/" component={Home} />
+              <Route path="/properties" component={Properties} />
+              <Route path="/properties/:id" component={PropertyDetail} />
+              <Route path="/areas" component={Areas} />
+              <Route path="/areas/:id" component={DestinationDetail} />
+              <Route path="/owners" component={Owners} />
+              <Route path="/about" component={About} />
+              <Route path="/contact" component={Contact} />
+              <Route>
+                <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center">
+                  <p className="font-serif text-[120px] leading-none" style={{ color: "var(--color-sand-border)" }}>404</p>
+                  <p className="font-serif text-3xl text-[var(--color-charcoal)] mb-3 -mt-4">Page not found</p>
+                  <p className="text-sm text-[var(--color-charcoal-muted)] font-light mb-8 max-w-xs">
+                    The page you're looking for has moved or doesn't exist.
+                  </p>
+                  <a
+                    href="/"
+                    className="px-8 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium text-white"
+                    style={{ backgroundColor: "var(--color-terracotta)" }}
+                  >
+                    Back to Home
+                  </a>
                 </div>
-              </div>
-            </Route>
-          </Switch>
-        </div>
-      </PublicLayout>
+              </Route>
+            </Switch>
+          </div>
+        </PublicLayout>
+      </ErrorBoundary>
     </LanguageProvider>
   );
 }

@@ -49,6 +49,40 @@ export const destinations: Destination[] = [
     propertyId: "villa-emerald",
   },
   {
+    id: "sao-martinho",
+    name: "São Martinho do Porto",
+    region: "Silver Coast",
+    tagline: "The Bay That Looks Like a Lake",
+    shortDesc:
+      "A sheltered scallop-shaped bay on the Silver Coast — warm turquoise water, a whitewashed village, and some of the calmest swimming on the Atlantic coast.",
+    image:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+    heroImage:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=85",
+    highlights: [
+      "Sheltered scallop-shaped bay",
+      "Warm turquoise water year-round",
+      "Weekly farmers' market",
+      "1h 15min north of Lisbon",
+      "Nazaré — 25 min away",
+      "Óbidos — 30 min away",
+    ],
+    facts: [
+      { label: "Distance to Lisbon", value: "1h 15min" },
+      { label: "Nearest big wave surf", value: "Nazaré, 25 min" },
+      { label: "Best for", value: "Families, Couples, Calm Sea" },
+      { label: "Season", value: "May – October" },
+    ],
+    paragraphs: [
+      "São Martinho do Porto has a secret that geography hands it: a bay shaped like an enormous scallop shell, almost completely enclosed by a narrow inlet, that turns the wild Atlantic into something that feels more like a warm lake. The water is genuinely turquoise in summer, and it stays warmer longer than anywhere else on the Silver Coast — ideal for families with small children or anyone who wants to swim without fighting the swell.",
+      "The village itself moves at the pace of a place that has never had to try too hard. A whitewashed church square, a handful of good restaurants serving grilled fish and local wine, a Wednesday morning market that spills across the main street. The local bakeries open early — pastéis de nata and warm bread rolls before a morning on the beach.",
+      "The Silver Coast north of Lisbon is still largely unknown to international visitors, which is its greatest asset. The towns have character without the crowds: Caldas da Rainha with its ceramic tradition, Óbidos entirely enclosed by medieval walls, Nazaré — once a quiet fishing village, now famous for the monster waves that break off Praia do Norte in winter (up to 30 metres). All within 30 minutes.",
+      "Apartamento São Martinho sits in the heart of the village — bright, well-appointed, with a terrace facing the evening light. It is the perfect base for slow days by the bay and adventurous afternoons along the coast.",
+    ],
+    comingSoon: false,
+    propertyId: "apartamento-sao-martinho",
+  },
+  {
     id: "ericeira",
     name: "Ericeira",
     region: "Lisbon Coast",

@@ -26,6 +26,41 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://bouganvilla.com/areas/aroeira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bouganvilla.com/areas/sao-martinho</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bouganvilla.com/areas/ericeira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bouganvilla.com/areas/lisbon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bouganvilla.com/areas/cascais</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bouganvilla.com/areas/comporta</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bouganvilla.com/areas/costa-caparica</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://bouganvilla.com/owners</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

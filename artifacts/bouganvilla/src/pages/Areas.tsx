@@ -1,10 +1,12 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { useT } from "../lib/i18n/context";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { destinations } from "../data/destinations";
 
 export default function Areas() {
   const t = useT();
+  useDocumentTitle("Destinations");
 
   return (
     <>

@@ -216,9 +216,44 @@ router.get("/admin/revenue", requireAdmin, async (req, res) => {
 router.get("/admin/properties", requireAdmin, async (_req, res) => {
   const pool = getPool();
   const { rows } = await pool.query(
-    `SELECT id, name, type, area, region, bedrooms, guests, active, airbnb_url FROM properties ORDER BY created_at ASC`
+    `SELECT id, name, type, area, region, bedrooms, bathrooms, guests,
+            description, long_description, image, images, amenities, tags,
+            highlights, nearby, cta_label, cta_href, cta_external,
+            airbnb_url, base_price_eur, active
+     FROM properties ORDER BY created_at ASC`
   );
   return res.json(rows);
+});
+
+router.patch("/admin/properties/:id", requireAdmin, async (req, res) => {
+  const pool = getPool();
+  const allowed = [
+    "name", "type", "area", "region", "bedrooms", "bathrooms", "guests",
+    "description", "long_description", "image", "images", "amenities", "tags",
+    "highlights", "nearby", "cta_label", "cta_href", "cta_external",
+    "airbnb_url", "base_price_eur", "active",
+  ];
+  const updates: string[] = [];
+  const params: unknown[] = [];
+
+  for (const key of allowed) {
+    if (req.body[key] !== undefined) {
+      params.push(typeof req.body[key] === "object"
+        ? JSON.stringify(req.body[key])
+        : req.body[key]);
+      updates.push(`${key} = $${params.length}`);
+    }
+  }
+  if (!updates.length) return res.status(400).json({ error: "Nothing to update" });
+  params.push(req.params.id);
+  updates.push(`updated_at = now()`);
+
+  const { rows } = await pool.query(
+    `UPDATE properties SET ${updates.join(", ")} WHERE id = $${params.length} RETURNING *`,
+    params
+  );
+  if (!rows[0]) return res.status(404).json({ error: "Property not found" });
+  return res.json(rows[0]);
 });
 
 // ── iCal feeds (admin) ────────────────────────────────────────────────────────

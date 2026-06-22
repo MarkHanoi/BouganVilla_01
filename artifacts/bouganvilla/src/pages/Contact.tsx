@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Mail, Phone, Send, CheckCircle, AlertCircle, Loader } from "lucide-react";
 import { useT } from "../lib/i18n/context";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
 export default function Contact() {
+  useDocumentTitle("Contact & Enquiries");
   const t = useT();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -251,6 +253,15 @@ export default function Contact() {
                   </div>
                 </li>
               </ul>
+            </div>
+
+            <div className="border border-[var(--color-sand-border)] p-6" style={{ backgroundColor: "var(--color-cream)" }}>
+              <p className="text-[10px] tracking-[0.2em] uppercase font-medium mb-2" style={{ color: "var(--color-charcoal)" }}>
+                Response time
+              </p>
+              <p className="text-sm text-[var(--color-charcoal-muted)] font-light leading-relaxed">
+                We reply to every enquiry within <strong className="font-medium text-[var(--color-charcoal)]">24 hours</strong>, usually much sooner.
+              </p>
             </div>
 
             <div className="border border-[var(--color-sand-border)] p-6" style={{ backgroundColor: "var(--color-sand)" }}>

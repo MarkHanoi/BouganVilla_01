@@ -1,9 +1,11 @@
 import { Link } from "wouter";
 import { ArrowRight, Mail } from "lucide-react";
 import { useT } from "../lib/i18n/context";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export default function Owners() {
   const t = useT();
+  useDocumentTitle("For Property Owners");
 
   return (
     <>

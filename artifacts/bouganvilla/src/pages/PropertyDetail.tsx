@@ -3,10 +3,40 @@ import { useParams, Link, useLocation } from "wouter";
 import {
   ArrowLeft, BedDouble, Bath, Users, ExternalLink,
   X, ChevronLeft, ChevronRight, Grid3X3, MapPin, Car, Phone,
+  Waves, Flower2, Flame, Wifi, Wind, UtensilsCrossed,
+  Sun, Shirt, ParkingCircle, TreePine, Mountain, Footprints,
+  type LucideIcon,
 } from "lucide-react";
-import { properties } from "../data";
 import AvailabilityCalendar from "../components/AvailabilityCalendar";
 import { useT } from "../lib/i18n/context";
+import { useProperty, useProperties } from "../hooks/useProperties";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
+
+/* ── Amenity icon mapper ────────────────────────────── */
+const AMENITY_ICONS: Array<[RegExp, LucideIcon]> = [
+  [/pool/i, Waves],
+  [/bbq|grill|barbecue/i, Flame],
+  [/garden|terrace|outdoor/i, Flower2],
+  [/park/i, ParkingCircle],
+  [/wi.?fi|internet/i, Wifi],
+  [/air.?con|a\/c|climate/i, Wind],
+  [/kitchen|cook/i, UtensilsCrossed],
+  [/lounge|sun|solar/i, Sun],
+  [/towel|linen|sheet/i, Shirt],
+  [/beach|sea|ocean|coast/i, Waves],
+  [/walk|stroll|footpath/i, Footprints],
+  [/mountain|hill|view/i, Mountain],
+  [/tree|forest|nature/i, TreePine],
+  [/car|drive|road/i, Car],
+  [/bath|shower|wc|toilet/i, Bath],
+  [/location|central|map|area/i, MapPin],
+];
+function amenityIcon(label: string): LucideIcon {
+  for (const [re, icon] of AMENITY_ICONS) {
+    if (re.test(label)) return icon;
+  }
+  return Flower2;
+}
 
 /* ── Lightbox ──────────────────────────────────────── */
 function Lightbox({
@@ -229,6 +259,8 @@ function GalleryGrid({
                     src={src}
                     alt={`View ${idx + 1}`}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/12 transition-colors duration-300" />
                   {isLast && remaining > 0 && (
@@ -253,12 +285,23 @@ function GalleryGrid({
 export default function PropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
-  const property = properties.find((p) => p.id === id);
+  const { property, loading } = useProperty(id);
+  const { properties: allProperties } = useProperties();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const t = useT();
 
   function handleEnquire(checkin: string, checkout: string) {
     navigate(`/contact?checkin=${checkin}&checkout=${checkout}&property=${id ?? ""}`);
+  }
+
+  useDocumentTitle(property?.name ?? null);
+
+  if (loading && !property) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-6 h-6 border border-[var(--color-charcoal-subtle)] border-t-[var(--color-terracotta)] rounded-full animate-spin" />
+      </div>
+    );
   }
 
   if (!property) {
@@ -274,8 +317,32 @@ export default function PropertyDetail() {
     );
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "name": property.name,
+    "description": property.description,
+    "address": { "@type": "PostalAddress", "addressLocality": property.area, "addressCountry": "PT" },
+    "numberOfRooms": property.bedrooms,
+    "occupancy": { "@type": "QuantitativeValue", "maxValue": property.guests },
+    ...(property.basePriceEur ? {
+      "priceRange": `€${property.basePriceEur}/night`,
+      "offers": {
+        "@type": "Offer",
+        "price": property.basePriceEur,
+        "priceCurrency": "EUR",
+        "availability": "https://schema.org/InStock",
+      }
+    } : {}),
+    "image": property.images.slice(0, 3),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── Gallery ─────────────────────────────────── */}
       <section className="pt-[72px]">
         <GalleryGrid images={property.images} onOpen={setLightboxIndex} t={t} />
@@ -362,16 +429,21 @@ export default function PropertyDetail() {
               <p className="text-[10px] tracking-[0.28em] uppercase font-medium text-[var(--color-charcoal)] mb-5">
                 {t.detail.whatsIncluded}
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-8">
-                {property.amenities.map((a) => (
-                  <div key={a} className="flex items-center gap-3">
-                    <div
-                      className="w-1 h-1 rounded-full shrink-0"
-                      style={{ backgroundColor: "var(--color-terracotta)" }}
-                    />
-                    <span className="text-sm text-[var(--color-charcoal-muted)] font-light">{a}</span>
-                  </div>
-                ))}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-6">
+                {property.amenities.map((a) => {
+                  const Icon = amenityIcon(a);
+                  return (
+                    <div key={a} className="flex items-center gap-3">
+                      <Icon
+                        size={14}
+                        strokeWidth={1.5}
+                        className="shrink-0"
+                        style={{ color: "var(--color-terracotta)" }}
+                      />
+                      <span className="text-sm text-[var(--color-charcoal-muted)] font-light leading-snug">{a}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -410,6 +482,8 @@ export default function PropertyDetail() {
                       <img
                         src={src}
                         alt={`Interior ${i + 6}`}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
                       />
                     </div>
@@ -428,9 +502,16 @@ export default function PropertyDetail() {
               <h3 className="font-serif text-2xl text-[var(--color-charcoal)] mb-1 leading-snug">
                 {property.name}
               </h3>
-              <p className="text-xs text-[var(--color-charcoal-muted)] font-light mb-8 leading-relaxed">
+              <p className="text-xs text-[var(--color-charcoal-muted)] font-light mb-3 leading-relaxed">
                 {property.area} · {property.region}
               </p>
+              {property.basePriceEur && (
+                <p className="mb-6">
+                  <span className="text-[10px] tracking-[0.15em] uppercase text-[var(--color-charcoal-muted)] font-light">From </span>
+                  <span className="font-serif text-2xl text-[var(--color-charcoal)]">€{property.basePriceEur}</span>
+                  <span className="text-xs text-[var(--color-charcoal-muted)] font-light">/night</span>
+                </p>
+              )}
 
               <div className="space-y-2.5 mb-5">
                 <a
@@ -518,8 +599,63 @@ export default function PropertyDetail() {
         </div>
       </section>
 
+      {/* ── Also from our collection ──────────────── */}
+      {(() => {
+        const others = allProperties.filter(p => p.id !== property.id);
+        if (others.length === 0) return null;
+        return (
+          <section className="px-6 lg:px-12 max-w-7xl mx-auto pb-16">
+            <p className="text-[10px] tracking-[0.3em] uppercase font-medium mb-8" style={{ color: "var(--color-charcoal-muted)" }}>
+              Also from our collection
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {others.map(other => (
+                <Link
+                  key={other.id}
+                  href={`/properties/${other.id}`}
+                  className="group border border-[var(--color-sand-border)] overflow-hidden block"
+                  style={{ backgroundColor: "var(--color-cream)" }}
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                      src={other.image}
+                      alt={other.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  </div>
+                  <div className="p-5">
+                    <p className="text-[9px] tracking-[0.22em] uppercase font-light mb-1" style={{ color: "var(--color-charcoal-muted)" }}>
+                      {other.area} · {other.region}
+                    </p>
+                    <p className="font-serif text-xl text-[var(--color-charcoal)] mb-2 group-hover:text-[var(--color-terracotta)] transition-colors">
+                      {other.name}
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <span className="flex items-center gap-1.5 text-xs text-[var(--color-charcoal-muted)] font-light">
+                        <BedDouble size={11} strokeWidth={1.5} /> {other.bedrooms} bed
+                      </span>
+                      <span className="flex items-center gap-1.5 text-xs text-[var(--color-charcoal-muted)] font-light">
+                        <Users size={11} strokeWidth={1.5} /> Sleeps {other.guests}
+                      </span>
+                      {other.basePriceEur && (
+                        <span className="text-xs text-[var(--color-charcoal-muted)] font-light">
+                          From <strong className="text-[var(--color-charcoal)]">€{other.basePriceEur}</strong>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
+
       {/* ── Availability Calendar ─────────────────── */}
-      <section className="px-6 lg:px-12 max-w-7xl mx-auto pb-16 lg:pb-24">
+      <section className="px-6 lg:px-12 max-w-7xl mx-auto pb-32 lg:pb-24">
         <div
           className="border border-[var(--color-sand-border)] p-8 lg:p-12"
           style={{ backgroundColor: "rgba(255,255,255,0.70)" }}
@@ -540,6 +676,42 @@ export default function PropertyDetail() {
           t={t}
         />
       )}
+
+      {/* ── Mobile sticky booking bar ─────────────── */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-[var(--color-sand-border)] px-4 py-3 flex items-center gap-3"
+        style={{ backgroundColor: "rgba(250,247,242,0.96)", backdropFilter: "blur(12px)" }}
+      >
+        {property.basePriceEur ? (
+          <div className="flex flex-col justify-center shrink-0">
+            <p className="text-[9px] tracking-[0.2em] uppercase font-light" style={{ color: "var(--color-charcoal-muted)" }}>From</p>
+            <p>
+              <span className="font-serif text-xl" style={{ color: "var(--color-charcoal)" }}>€{property.basePriceEur}</span>
+              <span className="text-[10px] font-light" style={{ color: "var(--color-charcoal-muted)" }}>/night</span>
+            </p>
+          </div>
+        ) : (
+          <p className="text-xs font-light shrink-0" style={{ color: "var(--color-charcoal-muted)" }}>{property.name}</p>
+        )}
+        <Link
+          href={`/contact?property=${id}`}
+          className="flex-1 flex items-center justify-center py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium text-white transition-opacity hover:opacity-90"
+          style={{ backgroundColor: "var(--color-terracotta)" }}
+        >
+          Enquire Now
+        </Link>
+        {property.cta.external && (
+          <a
+            href={property.cta.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center py-3.5 px-4 text-[11px] tracking-[0.12em] uppercase font-medium border border-[var(--color-charcoal-muted)]/25 transition-colors"
+            style={{ color: "var(--color-charcoal-muted)" }}
+          >
+            <ExternalLink size={13} />
+          </a>
+        )}
+      </div>
 
       <style>{`
         @keyframes fadeInScale {

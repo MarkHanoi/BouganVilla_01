@@ -1,9 +1,11 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { useT } from "../lib/i18n/context";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export default function About() {
   const t = useT();
+  useDocumentTitle("Our Story");
 
   return (
     <>

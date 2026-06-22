@@ -16,6 +16,7 @@ export interface Property {
   highlights: { label: string; value: string }[];
   nearby: { label: string; distance: string }[];
   cta: { label: string; href: string; external?: boolean };
+  basePriceEur?: number;
 }
 
 export interface Testimonial {
@@ -110,19 +111,33 @@ export const properties: Property[] = [
     images: [
       "/photos/apartamento-sao-martinho/01_main.jpg",
     ],
-    amenities: ["Central Location", "Terrace", "Silver Coast", "Beach Walk", "Wi-Fi"],
-    tags: ["Apartment", "Central", "Cosy", "Sleeps 4"],
+    amenities: [
+      "Central Location",
+      "Terrace",
+      "Wi-Fi",
+      "Beach Walk",
+      "Fully Equipped Kitchen",
+      "Air Conditioning",
+    ],
+    tags: ["Apartment", "Central", "Cosy", "Sleeps 4", "Silver Coast"],
     highlights: [
       { label: "Bedrooms", value: "2" },
       { label: "Bathrooms", value: "1" },
       { label: "Guests", value: "Up to 4" },
-      { label: "Beach", value: "Walk" },
+      { label: "Beach", value: "5 min walk" },
     ],
-    nearby: [],
+    nearby: [
+      { label: "São Martinho Bay", distance: "5 min walk" },
+      { label: "Village centre", distance: "2 min walk" },
+      { label: "Nazaré (big waves)", distance: "25 min" },
+      { label: "Óbidos (walled city)", distance: "30 min" },
+      { label: "Lisbon", distance: "1h 15min" },
+      { label: "Lisbon Airport", distance: "1h 20min" },
+    ],
     cta: {
       label: "Enquire Now",
-      href: "mailto:info@bouganvilla.com",
-      external: true,
+      href: "/contact?property=apartamento-sao-martinho",
+      external: false,
     },
   },
 ];
